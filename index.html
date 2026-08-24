@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="瑞娜工作台">
+<meta name="theme-color" content="#F8F6F2">
+<meta name="description" content="瑞娜的私人运营工作台">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="167x167" href="apple-touch-icon-167.png">
+<link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon-152.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<title>瑞娜的工作台</title>
+<style>
+:root{
+  --bg:#F8F6F2; --card:#FFFFFF; --ink:#1A1A1A; --gray:#8A8A8A;
+  --teal:#6BA8A0; --teal-dk:#5E9C94; --teal-lt:#E9F1EE;
+  --coral:#D85A30; --coral-lt:#FAECE7;
+  --gold-lt:#FAF0DD; --pink-lt:#F7ECEA;
+  --shadow:0 2px 8px rgba(94,156,148,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
+#app{max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:96px;position:relative}
+.page{display:none;padding:20px 20px 0;animation:fadeIn .25s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.hdr{display:flex;align-items:center;justify-content:space-between;margin:14px 0 10px}
+.hdr h1{font-size:22px;font-weight:700}
+.hdr .sub{font-size:13px;color:var(--gray);margin-top:2px}
+.avatar{width:40px;height:40px;border-radius:20px;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600}
+
+.card{background:var(--card);border-radius:16px;padding:16px;box-shadow:var(--shadow);margin-bottom:14px}
+.card h3{font-size:15px;font-weight:700;margin-bottom:8px}
+.muted{color:var(--gray);font-size:12px}
+
+.banner{border-radius:16px;padding:14px 16px;margin:0 0 14px;display:flex;align-items:center;gap:12px;color:#fff;cursor:pointer}
+.banner.tax{background:var(--coral);box-shadow:0 4px 12px rgba(216,90,48,.3)}
+.banner.news{background:var(--teal);box-shadow:0 4px 12px rgba(107,168,160,.25)}
+.banner .b-ico{font-size:22px}
+.banner .b-tt{font-size:14px;font-weight:700}
+.banner .b-sub{font-size:12px;opacity:.9;margin-top:2px}
+.dots{display:flex;gap:5px;margin-left:auto}
+.dots i{width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.45)}
+.dots i.on{background:#fff}
+
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border-radius:14px;padding:12px 8px;box-shadow:var(--shadow);text-align:center}
+.stat .v{font-size:18px;font-weight:700;color:var(--teal-dk)}
+.stat .v.coral{color:var(--coral)}
+.stat .l{font-size:11px;color:var(--gray);margin-top:3px}
+
+.mini-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.mini-grid .g-item{background:var(--card);border-radius:12px;padding:10px 4px;box-shadow:var(--shadow);text-align:center;cursor:pointer;border:none}
+.mini-grid .gi{font-size:20px;margin-bottom:4px}
+.mini-grid .gl{font-size:11px;color:#4A4A4A;font-weight:600}
+
+/* ====== 通用左右布局 ====== */
+.side-layout{display:flex;gap:10px;align-items:flex-start}
+.side-nav{flex:none;width:74px;display:flex;flex-direction:column;gap:8px;padding-top:2px}
+.nav-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 4px;border-radius:14px;background:transparent;cursor:pointer;border:none;font-family:inherit;width:100%;transition:background .2s}
+.nav-btn.on{background:#fff;box-shadow:var(--shadow)}
+.nav-btn .nav-i{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;background:var(--coral-lt);color:#B57260}
+.nav-btn.on .nav-i{background:var(--coral);color:#fff}
+.nav-btn .nav-l{font-size:11px;color:#7A7A7A;font-weight:600;line-height:1.25}
+.nav-btn.on .nav-l{color:var(--coral)}
+.side-main{flex:1;min-width:0}
+.side-hint{font-size:12px;color:var(--gray);padding:0 0 8px}
+.side-hint .tag{margin-left:6px}
+
+.progress{margin-bottom:14px}
+.progress .pt{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
+.pbar{height:8px;border-radius:4px;background:#ECE6DA;overflow:hidden}
+.pbar i{display:block;height:100%;background:var(--teal);border-radius:4px;transition:width .3s}
+.task{background:var(--card);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);margin-bottom:10px;display:flex;gap:12px;align-items:flex-start}
+.task.done{opacity:.55}
+.ck{width:22px;height:22px;border-radius:11px;border:2px solid var(--teal);flex:none;margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px}
+.ck.on{background:var(--teal);border-color:var(--teal)}
+.task .tt{font-size:15px;font-weight:600}
+.task.done .tt{text-decoration:line-through}
+.task .tm{font-size:12px;color:var(--gray);margin-top:3px}
+.tag{display:inline-block;padding:2px 10px;border-radius:11px;font-size:11px;background:var(--teal-lt);color:var(--teal-dk)}
+.tag.coral{background:var(--coral-lt);color:var(--coral)}
+.tag.pink{background:var(--pink-lt);color:#C99890}
+.tag.gold{background:var(--gold-lt);color:#C8905A}
+
+.rulepop{background:#FFF7F5;border:1.5px solid #F3C9BA;border-radius:16px;padding:14px 16px;margin:0 0 14px}
+.rulepop .rp-h{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--coral);margin-bottom:8px}
+.rulepop ul{list-style:none}
+.rulepop li{font-size:12.5px;color:#5A4038;padding:3px 0;line-height:1.5}
+
+.topic-card{background:var(--card);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);margin-bottom:10px;cursor:pointer;transition:box-shadow .2s}
+.topic-card:active{box-shadow:0 1px 4px rgba(94,156,148,.12)}
+.topic-card .tp-t{font-size:15.5px;font-weight:700;line-height:1.4;margin-bottom:6px}
+.topic-card .tp-how{font-size:12.5px;color:#5A5A5A;line-height:1.6;background:#FAF6EE;border-radius:10px;padding:8px 12px;margin-top:6px}
+.tp-hot{font-size:11px;color:var(--gray);font-weight:600}
+.tp-full{display:none;margin-top:10px;padding-top:10px;border-top:1px solid #F0EBE0}
+.tp-full.show{display:block}
+.tp-full h4{font-size:13px;color:var(--coral);margin-bottom:6px;font-weight:700}
+.tp-full .tp-script{font-size:12.5px;color:#3A3A3A;line-height:1.7;background:var(--coral-lt);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.tp-full .tp-edit{font-size:12.5px;color:#3A3A3A;line-height:1.7;background:var(--teal-lt);border-radius:10px;padding:10px 12px}
+.tp-toggle{font-size:12px;color:var(--teal-dk);margin-top:8px;font-weight:600}
+
+.rule{background:var(--card);border-radius:16px;padding:16px;box-shadow:var(--shadow);margin-bottom:12px}
+.badge{display:inline-block;padding:3px 10px;border-radius:11px;font-size:11px;font-weight:600;color:#fff;margin-bottom:8px}
+.badge.hi{background:#D85A30}
+.badge.mid{background:#E0A030}
+.badge.ok{background:#6BA8A0}
+.rule .rr-t{font-size:15px;font-weight:700;margin-bottom:5px}
+.rule .rr-d{font-size:12.5px;color:var(--gray);line-height:1.6;margin-bottom:6px}
+.rule .rr-how{font-size:12.5px;color:#4A4A4A;line-height:1.6;background:var(--teal-lt);border-radius:10px;padding:8px 12px}
+.rule .rr-how b{color:var(--teal-dk)}
+
+.money-card{background:var(--coral);border-radius:20px;padding:20px;color:#fff;box-shadow:0 4px 12px rgba(216,90,48,.3);margin-bottom:14px}
+.money-card .ml{font-size:13px;color:var(--coral-lt)}
+.money-card .mv{font-size:32px;font-weight:700;margin:6px 0 4px;font-family:"DIN Alternate",-apple-system,sans-serif}
+.money-card .mr{display:flex;justify-content:space-between;font-size:12px;color:var(--coral-lt);margin-top:8px;cursor:pointer}
+.money-card .mr span{padding:3px 8px;border-radius:8px;background:rgba(255,255,255,.12)}
+.money-summary{display:flex;gap:10px;margin-bottom:14px}
+.money-summary .ms{flex:1;background:var(--card);border-radius:14px;padding:12px;box-shadow:var(--shadow);text-align:center}
+.money-summary .ms .ml{font-size:11px;color:var(--gray)}
+.money-summary .ms .mv{font-size:16px;font-weight:700;margin-top:3px}
+.money-summary .ms .mv.teal{color:var(--teal-dk)}
+.money-summary .ms .mv.coral{color:var(--coral)}
+.quick{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.q-item{background:var(--card);border-radius:14px;padding:10px 4px;box-shadow:var(--shadow);text-align:center;cursor:pointer;border:none}
+.q-item .qi{font-size:18px;margin-bottom:3px}
+.q-item .ql{font-size:11px;color:#4A4A4A}
+.q-item.add{background:var(--coral)}
+.q-item.add .ql{color:#fff}
+.q-item.income{background:var(--teal-lt)}
+.q-item.income .ql{color:var(--teal-dk)}
+.sec-h{font-size:15px;font-weight:700;margin:4px 0 12px}
+.entry{background:var(--card);border-radius:14px;padding:12px 16px;box-shadow:var(--shadow);margin-bottom:10px;display:flex;align-items:center;gap:12px}
+.e-ico{width:36px;height:36px;border-radius:12px;background:var(--coral-lt);display:flex;align-items:center;justify-content:center;font-size:17px;flex:none}
+.e-ico.income{background:var(--teal-lt)}
+.e-body{flex:1;min-width:0}
+.e-t{font-size:14px}
+.e-m{font-size:11px;color:var(--gray);margin-top:2px}
+.e-amt{font-size:15px;font-weight:600;flex:none}
+.e-amt.income{color:var(--teal-dk)}
+.e-del{border:none;background:none;color:#C9C9C9;font-size:16px;padding:4px;cursor:pointer}
+
+.word-hero{background:var(--card);border-radius:20px;padding:22px;box-shadow:var(--shadow);margin-bottom:14px;text-align:center}
+.word-hero .w{font-size:30px;font-weight:700;color:var(--teal-dk)}
+.word-hero .p{font-size:13px;color:var(--gray);margin-top:2px}
+.word-hero .ex{font-size:14px;margin-top:12px;line-height:1.6}
+.word-hero .ex b{color:var(--teal-dk)}
+.word-card{background:var(--card);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);margin-bottom:10px}
+.word-card .wh{display:flex;align-items:baseline;gap:8px}
+.word-card .w{font-size:17px;font-weight:700}
+.word-card .p{font-size:12px;color:var(--gray)}
+.word-card .row{font-size:12.5px;margin-top:7px;line-height:1.55;color:#4A4A4A}
+.word-card .row b{font-weight:600}
+.word-mini{background:var(--card);border-radius:14px;padding:12px 14px;box-shadow:var(--shadow);margin-bottom:8px}
+.word-mini .wh{display:flex;align-items:baseline;gap:8px}
+.word-mini .w{font-size:16px;font-weight:700}
+.word-mini .p{font-size:11px;color:var(--gray)}
+.word-mini .sc{font-size:12px;color:#5A5A5A;margin-top:5px}
+
+.study-card{background:var(--card);border-radius:16px;padding:16px;box-shadow:var(--shadow);margin-bottom:12px;cursor:pointer;transition:box-shadow .2s}
+.study-card:active{box-shadow:0 1px 4px rgba(94,156,148,.12)}
+.study-card .st{font-size:15px;font-weight:700;margin-bottom:5px;line-height:1.45}
+.study-card .sd{font-size:12.5px;color:var(--gray);line-height:1.6}
+.study-card .sfull{font-size:13px;color:#3A3A3A;line-height:1.7;margin-top:10px;display:none;padding-top:10px;border-top:1px solid #F0EBE0}
+.study-card .sfull.show{display:block}
+.study-card .stoggle{font-size:12px;color:var(--teal-dk);margin-top:8px;font-weight:600}
+.stars{font-size:12px;color:var(--coral);letter-spacing:1px}
+
+.tabbar{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:8px 20px calc(12px + env(safe-area-inset-bottom))}
+.tabbar .pill{max-width:440px;margin:0 auto;background:#fff;border-radius:28px;height:56px;display:flex;box-shadow:0 4px 12px rgba(94,156,148,.18)}
+.tabbar button{flex:1;border:none;background:none;font-size:12px;color:#9AA0A6;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-family:inherit}
+.tabbar button .ti{font-size:19px}
+.tabbar button.on{color:var(--teal-dk);font-weight:700}
+
+.mask{position:fixed;inset:0;background:rgba(26,26,26,.45);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.mask.show{display:flex}
+.sheet{background:#fff;width:100%;max-width:480px;border-radius:22px 22px 0 0;padding:22px 20px calc(24px + env(safe-area-inset-bottom));animation:up .25s ease;max-height:85vh;overflow-y:auto}
+@keyframes up{from{transform:translateY(40px);opacity:.5}to{transform:none;opacity:1}}
+.sheet h3{font-size:17px;margin-bottom:16px}
+.f-row{margin-bottom:14px}
+.f-row label{display:block;font-size:13px;color:var(--gray);margin-bottom:6px}
+.f-row input,.f-row select{width:100%;border:1.5px solid #E5E0D5;border-radius:12px;padding:11px 12px;font-size:15px;font-family:inherit;background:#FDFCF9;color:var(--ink);-webkit-appearance:none}
+.f-row input:focus,.f-row select:focus{outline:none;border-color:var(--teal)}
+.btn{width:100%;border:none;background:var(--coral);color:#fff;border-radius:14px;padding:13px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn.ghost{background:var(--teal-lt);color:var(--teal-dk)}
+.btn.teal{background:var(--teal)}
+.empty{text-align:center;color:var(--gray);font-size:13px;padding:26px 0}
+
+.d-mask{position:fixed;inset:0;background:rgba(26,26,26,.5);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.d-mask.show{display:flex}
+.d-sheet{background:#fff;width:100%;max-width:480px;border-radius:22px 22px 0 0;padding:24px 20px calc(28px + env(safe-area-inset-bottom));animation:up .25s ease;max-height:80vh;overflow-y:auto}
+.d-sheet h3{font-size:18px;margin-bottom:12px;line-height:1.4}
+.d-sheet .d-body{font-size:14px;line-height:1.75;color:#3A3A3A}
+.d-sheet .d-body p{margin-bottom:10px}
+.d-sheet .d-close{margin-top:18px}
+
+.fab{position:fixed;right:18px;bottom:92px;z-index:40;width:50px;height:50px;border-radius:25px;background:var(--coral);border:none;color:#fff;font-size:20px;box-shadow:0 4px 12px rgba(216,90,48,.35);cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit}
+.c-mask{position:fixed;inset:0;background:rgba(26,26,26,.5);z-index:200;display:none;flex-direction:column;justify-content:flex-end}
+.c-mask.show{display:flex}
+.c-box{background:#F8F6F2;width:100%;max-width:480px;height:75vh;border-radius:22px 22px 0 0;display:flex;flex-direction:column;animation:up .25s ease}
+.c-hdr{background:var(--teal);color:#fff;padding:14px 20px;border-radius:22px 22px 0 0;display:flex;align-items:center;gap:10px;flex:none}
+.c-hdr .c-t{font-size:16px;font-weight:700}
+.c-hdr .c-sub{font-size:11px;opacity:.85}
+.c-hdr .c-close{margin-left:auto;background:none;border:none;color:#fff;font-size:22px;cursor:pointer}
+.c-msgs{flex:1;overflow-y:auto;padding:16px 16px;-webkit-overflow-scrolling:touch}
+.c-msg{margin-bottom:12px;max-width:85%}
+.c-msg.bot{margin-right:auto}
+.c-msg.me{margin-left:auto;text-align:right}
+.c-bubble{display:inline-block;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.6}
+.c-msg.bot .c-bubble{background:#fff;color:var(--ink);border-bottom-left-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.c-msg.me .c-bubble{background:var(--teal);color:#fff;border-bottom-right-radius:4px}
+.c-quick{display:flex;flex-wrap:wrap;gap:8px;padding:0 16px 8px;flex:none}
+.c-quick button{border:1.5px solid var(--teal);background:#fff;color:var(--teal-dk);border-radius:16px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.c-input{display:flex;gap:8px;padding:12px 16px calc(16px + env(safe-area-inset-bottom));background:#fff;flex:none;border-top:1px solid #F0EBE0}
+.c-input input{flex:1;border:1.5px solid #E5E0D5;border-radius:22px;padding:10px 16px;font-size:14px;font-family:inherit;outline:none;background:#FDFCF9}
+.c-input input:focus{border-color:var(--teal)}
+.c-input button{border:none;background:var(--coral);color:#fff;border-radius:20px;padding:0 18px;font-size:15px;cursor:pointer;font-family:inherit;font-weight:600}
+.bak-row{display:flex;justify-content:center;gap:16px;margin:14px 0 0}
+.bak-row button{border:none;background:none;color:var(--gray);font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ============ 首页 ============ -->
+<div class="page active" id="pg-home">
+  <div class="hdr">
+    <div><h1 id="greet">你好，瑞娜</h1><div class="sub" id="today"></div></div>
+    <div class="avatar">瑞</div>
+  </div>
+  <div class="side-layout">
+    <div class="side-nav" id="homeNav"></div>
+    <div class="side-main" id="homeMain"></div>
+  </div>
+</div>
+
+<!-- ============ 每日计划 ============ -->
+<div class="page" id="pg-plan">
+  <div class="hdr"><div><h1>每日计划</h1><div class="sub" id="planSub"></div></div></div>
+  <div class="side-layout">
+    <div class="side-nav" id="planNav"></div>
+    <div class="side-main" id="planMain"></div>
+  </div>
+</div>
+
+<!-- ============ 选题灵感 ============ -->
+<div class="page" id="pg-topic">
+  <div class="hdr"><div><h1>选题灵感</h1><div class="sub">今日推荐 · 按平台分类</div></div><div class="tag coral" style="cursor:pointer" onclick="shuffleTopics()">换一批</div></div>
+  <div class="side-layout">
+    <div class="side-nav" id="topicNav"></div>
+    <div class="side-main" id="topicMain"></div>
+  </div>
+</div>
+
+<!-- ============ 平台规则 ============ -->
+<div class="page" id="pg-rule">
+  <div class="hdr"><div><h1>平台规则</h1><div class="sub">发布前 1 分钟速查</div></div></div>
+  <div class="side-layout">
+    <div class="side-nav" id="ruleNav"></div>
+    <div class="side-main" id="ruleMain"></div>
+  </div>
+</div>
+
+<!-- ============ 记账 ============ -->
+<div class="page" id="pg-money">
+  <div class="hdr"><div><h1>记账</h1><div class="sub" id="moneyMonth"></div></div></div>
+  <div class="side-layout">
+    <div class="side-nav" id="moneyNav"></div>
+    <div class="side-main" id="moneyMain"></div>
+  </div>
+</div>
+
+<!-- ============ 每日5词 ============ -->
+<div class="page" id="pg-word">
+  <div class="hdr"><div><h1>每日5词</h1><div class="sub">生活+工作场景 · 记得更牢</div></div></div>
+  <div class="side-layout">
+    <div class="side-nav" id="wordNav"></div>
+    <div class="side-main" id="wordMain"></div>
+  </div>
+</div>
+
+<!-- ============ 知识学习 ============ -->
+<div class="page" id="pg-study">
+  <div class="hdr"><div><h1>知识学习</h1><div class="sub">每两周更新 · 点击卡片展开详情</div></div></div>
+  <div class="side-layout">
+    <div class="side-nav" id="studyNav"></div>
+    <div class="side-main" id="studyMain"></div>
+  </div>
+</div>
+
+</div>
+
+<!-- ============ 底部导航 ============ -->
+<div class="tabbar"><div class="pill">
+  <button class="on" data-pg="home" onclick="go('home')"><span class="ti">🏠</span>首页</button>
+  <button data-pg="plan" onclick="go('plan')"><span class="ti">📋</span>计划</button>
+  <button data-pg="topic" onclick="go('topic')"><span class="ti">💡</span>选题</button>
+  <button data-pg="money" onclick="go('money')"><span class="ti">💰</span>记账</button>
+  <button data-pg="study" onclick="go('study')"><span class="ti">📚</span>学习</button>
+</div></div>
+
+<!-- ============ 记一笔弹层 ============ -->
+<div class="mask" id="mask" onclick="if(event.target===this)closeSheet()">
+  <div class="sheet">
+    <h3 id="sheetTitle">记一笔</h3>
+    <div class="f-row"><label>金额（元）</label><input type="number" inputmode="decimal" id="fAmt" placeholder="0.00"></div>
+    <div class="f-row" id="fTitleRow"><label>具体物品 / 备注</label><input type="text" id="fTitle" placeholder="具体是什么？比如：螺蛳粉 / 长裙 / 花架"></div>
+    <div class="f-row"><label>分类</label><select id="fCat">
+      <option>餐饮·外卖</option><option>餐饮·买菜</option><option>餐饮·水果</option>
+      <option>服饰</option><option>日用品</option><option>设备·可抵税</option><option>其他</option>
+    </select></div>
+    <div class="f-row" id="fTypeRow"><label>类型</label><select id="fType"><option value="expense">支出</option><option value="income">收入/退款</option></select></div>
+    <button class="btn" onclick="saveEntry()">保存</button>
+    <div style="height:10px"></div>
+    <button class="btn ghost" onclick="closeSheet()">取消</button>
+  </div>
+</div>
+
+<!-- ============ 收入弹层 ============ -->
+<div class="mask" id="incomeMask" onclick="if(event.target===this)closeIncomeSheet()">
+  <div class="sheet">
+    <h3>记一笔收入 / 退款</h3>
+    <div class="f-row"><label>金额（元）</label><input type="number" inputmode="decimal" id="iAmt" placeholder="0.00"></div>
+    <div class="f-row"><label>备注</label><input type="text" id="iTitle" placeholder="比如：课包收入 / 微信退款 / 平台补贴"></div>
+    <div class="f-row"><label>来源</label><select id="iCat">
+      <option>课包收入</option><option>退款/退货</option><option>平台补贴</option><option>其他收入</option>
+    </select></div>
+    <button class="btn teal" onclick="saveIncome()">保存</button>
+    <div style="height:10px"></div>
+    <button class="btn ghost" onclick="closeIncomeSheet()">取消</button>
+  </div>
+</div>
+
+<!-- ============ 预算编辑弹层 ============ -->
+<div class="mask" id="budgetMask" onclick="if(event.target===this)closeBudget()">
+  <div class="sheet">
+    <h3>设置月度预算</h3>
+    <div class="f-row"><label>每月预算（元）</label><input type="number" inputmode="decimal" id="bAmt" placeholder="3600"></div>
+    <p style="font-size:12px;color:var(--gray);margin-bottom:14px">预算用于计算「剩余多少」，自己按实际情况填。收入不计入预算。</p>
+    <button class="btn" onclick="saveBudget()">保存</button>
+    <div style="height:10px"></div>
+    <button class="btn ghost" onclick="closeBudget()">取消</button>
+  </div>
+</div>
+
+<!-- ============ 内容详情弹层 ============ -->
+<div class="d-mask" id="dMask" onclick="if(event.target===this)closeDetail()">
+  <div class="d-sheet">
+    <h3 id="dTitle"></h3>
+    <div class="d-body" id="dBody"></div>
+    <button class="btn ghost d-close" onclick="closeDetail()">关闭</button>
+  </div>
+</div>
+
+<!-- AI 对话助手 -->
+<button class="fab" onclick="openChat()">💬</button>
+<div class="c-mask" id="cMask" onclick="if(event.target===this)closeChat()">
+  <div class="c-box">
+    <div class="c-hdr">
+      <div>🤖</div>
+      <div><div class="c-t">瑞娜助手</div><div class="c-sub">提问即搜 · 复杂问题可回WorkBuddy深聊</div></div>
+      <button class="c-close" onclick="closeChat()">✕</button>
+    </div>
+    <div class="c-msgs" id="cMsgs"></div>
+    <div class="c-quick" id="cQuick"></div>
+    <div class="c-input">
+      <input id="cIn" placeholder="问我任何问题…" onkeypress="if(event.key==='Enter')sendChat()">
+      <button onclick="sendChat()">发送</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var $=function(id){return document.getElementById(id)};
+var store={
+  get:function(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
+  set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+var now=new Date();
+var key='wb_'+now.getFullYear()+'-'+(now.getMonth()+1)+'-'+now.getDate();
+var WD=['日','一','二','三','四','五','六'];
+function fmtM(n){return n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+
+/* ---------- 通用侧边栏渲染 ---------- */
+function renderNav(containerId,tabs,currentK,fnName){
+  var h='';
+  for(var i=0;i<tabs.length;i++){
+    var t=tabs[i],on=t.k===currentK;
+    h+='<button class="nav-btn'+(on?' on':'')+'" onclick="'+fnName+'(\''+t.k+'\')">'+
+      '<div class="nav-i">'+t.i+'</div><div class="nav-l">'+t.l+'</div></button>';
+  }
+  $(containerId).innerHTML=h;
+}
+
+/* ---------- 页面切换 ---------- */
+function go(p){
+  var pages=document.querySelectorAll('.page');
+  for(var i=0;i<pages.length;i++)pages[i].classList.remove('active');
+  $('pg-'+p).classList.add('active');
+  var btns=document.querySelectorAll('.tabbar button');
+  for(var j=0;j<btns.length;j++)btns[j].classList.toggle('on',btns[j].getAttribute('data-pg')===p);
+  window.scrollTo(0,0);
+  if(p==='money')renderMoney();
+}
+
+/* ---------- 首页 ---------- */
+var homeTab='概览';
+var homeTabs=[
+  {k:'概览',i:'📊',l:'概览'},
+  {k:'今日',i:'📋',l:'今日'},
+  {k:'本月',i:'💰',l:'本月'}
+];
+function setHomeTab(k){homeTab=k;renderHome()}
+function renderHome(){
+  var h=now.getHours();
+  $('greet').textContent=(h<11?'早上好':h<18?'下午好':'晚上好')+'，瑞娜';
+  $('today').textContent=(now.getMonth()+1)+'月'+now.getDate()+'日 · 星期'+WD[now.getDay()]+' · 慢慢来';
+  renderNav('homeNav',homeTabs,homeTab,'setHomeTab');
+  var tasks=todayTasks(),done=store.get('wb_tasks_'+key,{});
+  var cnt=0;for(var i=0;i<tasks.length;i++)if(done[tasks[i].t])cnt++;
+  var dow=now.getDay(),wk=0;
+  if(dow===1)wk=1;else if(dow===3)wk=2;else if(dow===5)wk=3;else if(dow===0||dow===6)wk=3;else if(dow===2)wk=1;else wk=2;
+  var es=store.get('wb_entries',[]),m=(now.getMonth()+1),total=0,income=0;
+  for(var k=0;k<es.length;k++){var d=new Date(es[k].date);if(d.getMonth()+1===m){if(es[k].type==='income')income+=es[k].amt;else total+=es[k].amt}}
+  var html='';
+  if(homeTab==='概览'){
+    html+='<div class="banner" id="banner" onclick="bannerTap()"><div class="b-ico" id="bIco">📌</div><div style="flex:1"><div class="b-tt" id="bTt"></div><div class="b-sub" id="bSub"></div></div><div class="dots" id="bDots" style="display:none"><i class="on"></i><i></i><i></i></div></div>';
+    html+='<div class="stats"><div class="stat"><div class="v" id="stTask">'+cnt+'/'+tasks.length+'</div><div class="l">今日任务</div></div><div class="stat"><div class="v" id="stVideo">'+wk+'/3</div><div class="l">本周视频</div></div><div class="stat"><div class="v coral" id="stMoney">¥'+Math.round(total)+'</div><div class="l">本月支出</div></div></div>';
+    html+='<div class="mini-grid"><button class="g-item" onclick="go(\'plan\')"><div class="gi">📋</div><div class="gl">计划</div></button><button class="g-item" onclick="go(\'topic\')"><div class="gi">💡</div><div class="gl">选题</div></button><button class="g-item" onclick="go(\'rule\')"><div class="gi">🛡️</div><div class="gl">规则</div></button><button class="g-item" onclick="go(\'money\')"><div class="gi">💰</div><div class="gl">记账</div></button><button class="g-item" onclick="go(\'word\')"><div class="gi">🔤</div><div class="gl">单词</div></button><button class="g-item" onclick="go(\'study\')"><div class="gi">📚</div><div class="gl">学习</div></button></div>';
+    html+='<div class="bak-row"><button onclick="backupData()">⬇️ 备份数据</button></div>';
+  }else if(homeTab==='今日'){
+    html+='<div class="side-hint">今日 '+tasks.length+' 项 · 已完成 '+cnt+'<span class="tag '+(cnt===tasks.length?'':'coral')+'">'+(cnt===tasks.length?'全部完成':(tasks.length-cnt)+'项待办')+'</span></div>';
+    for(var i=0;i<tasks.length;i++){
+      var on=!!done[tasks[i].t];
+      html+='<div class="task'+(on?' done':'')+'"><div class="ck'+(on?' on':'')+'" onclick="toggleTask('+i+')">'+(on?'✓':'')+'</div><div style="flex:1"><div class="tt">'+tasks[i].t+'</div><div class="tm">'+tasks[i].m+'</div></div><div class="tag '+(tasks[i].tag==='日常'?'':tasks[i].tag==='直播'?'coral':tasks[i].tag==='脚本'?'gold':'')+'">'+tasks[i].tag+'</div></div>';
+    }
+  }else if(homeTab==='本月'){
+    var budget=getBudget(),net=income-total;
+    html+='<div class="money-card"><div class="ml">本月支出</div><div class="mv">¥ '+fmtM(total)+'</div><div class="mr" onclick="editBudget()"><span>预算 ¥'+fmtM(budget)+' ✏️</span><span>剩余 ¥'+fmtM(budget-total)+'</span></div></div>';
+    html+='<div class="money-summary"><div class="ms"><div class="ml">本月收入</div><div class="mv teal">¥'+fmtM(income)+'</div></div><div class="ms"><div class="ml">本月支出</div><div class="mv coral">¥'+fmtM(total)+'</div></div><div class="ms"><div class="ml">净额</div><div class="mv '+(net>=0?'teal':'coral')+'">'+(net>=0?'+':'-')+'¥'+fmtM(Math.abs(net))+'</div></div></div>';
+    html+='<div class="card"><div class="muted">查账征收 · 每季零申报 · 收入月10万以下免增值税<br>设备采购选「设备·可抵税」分类，留好发票</div></div>';
+    html+='<button class="btn" style="margin-top:4px" onclick="go(\'money\')">查看全部记录 →</button>';
+  }
+  $('homeMain').innerHTML=html;
+  if(homeTab==='概览')renderBanner();
+}
+
+/* ---------- 首页推送 ---------- */
+var newsIdx=0;
+var newsItems=[
+  {ico:'🤖',tt:'AI 视频工具更新',sub:'自动字幕+配音，剪视频时间省一半',
+   full:'<p><b>剪映 / Whisper</b> 免费档已支持自动出字幕，拍完练习视频一键生成文案。</p><p>实测：15分钟视频，手动打字幕约40分钟，AI自动生成约3分钟+人工校对5分钟。</p><p><b>怎么用：</b>剪映导入视频→「智能字幕」→选中文→自动识别→微调错别字即可。Whisper（开源免费）精度更高，但需要电脑安装。</p><p>对你的价值：一个人拍视频最大的时间黑洞就是后期，AI字幕能帮你省一半以上后期时间。</p>'},
+  {ico:'📈',tt:'视频号创作者新政策',sub:'知识类内容流量扶持，课包方向受益',
+   full:'<p>视频号近期加大对<b>知识类/教学类</b>内容的流量扶持，算法优先推荐有信息增量的内容。</p><p>你的「慢节奏身体练习」正好属于知识+养生交叉赛道，比纯娱乐内容更容易获得自然流量。</p><p><b>怎么蹭：</b>视频描述里加一句「这是我的练习记录，分享给需要的人」，算法会识别为知识分享类。</p><p>注意：不要说「教学/课程」，说「练习记录/分享」——既踩中知识类流量，又不踩广告法红线。</p>'},
+  {ico:'🧘',tt:'睡前放松类内容需求上升',sub:'中老年养生群体是增量，适合晨起/睡前系列',
+   full:'<p>近三个月视频号数据：<b>睡前冥想/放松类</b>完播率比平均高35%，中老年用户占比超60%。</p><p>你的受众扩展策略正好对上了——冥想/身体扫描内容天然适合中老年市场。</p><p><b>怎么落地：</b></p><p>1. 出「晨起版」和「睡前版」两个系列，配合中老年作息<br>2. 封面文字用「养生」「十分钟」等中老年敏感词<br>3. 话题标签用 #养生 #冥想 #静心 #睡前冥想，去掉具体病症标签<br>4. 视频号用户偏中年，冥想类比动作类更容易跑流量</p><p>通用引导语：「不管你现在身体什么状态」——避免健康人群觉得内容「是给病人做的」。</p>'},
+  {ico:'💰',tt:'个体户零申报操作指南',sub:'每季度一次，线上5分钟搞定',
+   full:'<p><b>时间：</b>每季度后15日内（1/15、4/15、7/15、10/15）</p><p><b>操作步骤：</b></p><p>1. 登录电子税务局（各地税务局官网）<br>2. 进入「我要办税」→「税费申报及缴纳」<br>3. 增值税：月收入10万以下免征，收入填0或实际数<br>4. 个人所得税：查账征收下按实际利润填，无收入利润填0<br>5. 确认提交，完成</p><p><b>注意：</b>零申报是合法的。利润为负（亏损）可以结转以后年度抵扣。不要歇业——歇业状态=非正常存续，ICP备案会被拒，小程序无法上线。</p>'},
+  {ico:'📱',tt:'小程序卖课资质确认',sub:'个体户可做知识付费，需执照正常+ICP备案',
+   full:'<p><b>可以做的：</b>知识付费/兴趣课（身体觉醒练习、冥想引导等）</p><p><b>不能做的：</b>K12学科培训（需办学许可证）、题库/教辅工具</p><p><b>上线需要的：</b></p><p>1. 执照正常存续（不能歇业）<br>2. ICP备案（免费，腾讯云/华为云可办）<br>3. 小程序认证 300元/年<br>4. 经营者/法人/管理员必须同一人</p><p>首年总成本约540-800元（认证300+域名+云开发）</p>'},
+  {ico:'💡',tt:'内容变现15种路径（2025最新）',sub:'从0粉到IP全阶段，不止卖课一条路',
+   full:'<p><b>零粉阶段：</b></p><p>· 抖音中视频计划：1-30分钟视频千次播放1.2-8元<br>· 视频号流量分成：社交裂变加权，知识类千次收益超抖音<br>· 快手光合计划：同城流量+AI共创，新号保底曝光</p><p><b>1万粉阶段：</b></p><p>· 广告接单：穿搭博主800起/条，美妆1500起/条<br>· 蒲公英平台：家居母婴类转化率8.3%<br>· 星图广告：达人分成提升至45%</p><p><b>变现阶段：</b></p><p>· 知识付费：课包/付费社群（你的方向）<br>· 直播带货：选品秘诀=动销率≥75%+复购率≥25%<br>· 私域社群：年费199元×50人=万元/月<br>· IP衍生：自创品牌、线下见面会</p><p><b>对你的价值：</b>课包是第一步，后续可叠加付费社群+直播。先跑通课包再看下一步。</p>'},
+  {ico:'🔥',tt:'2025短视频高完播率7个隐藏技巧',sub:'前3秒决定80%流量，分段钩子+进度条刺激',
+   full:'<p><b>技巧1：分段钩子结构</b></p><p>0-3秒强冲突开场（"你买的防晒霜可能根本没用！"）→10秒抛利益点→30秒制造悬念</p><p><b>技巧2：时间错位剪辑</b></p><p>15秒视频按12秒节奏剪辑（加速1.2倍+删过渡句），关键信息重复2次</p><p><b>技巧3：进度条刺激点</b></p><p>在1/4、1/2、3/4处设视觉标记（文字/音效），如"终极秘诀来了！"</p><p><b>技巧4：伪闭环结构</b></p><p>前20秒完成主体→黑屏1秒→弹出彩蛋（"别走！附赠一个隐藏技巧"）→完播率+15%</p><p><b>技巧5：听觉锚点</b></p><p>每7秒加提示音（"叮"），BGM突然停制造悬念</p><p><b>技巧6：变速狙击</b></p><p>0-3秒3倍速快剪高光→4-12秒1倍速核心→13秒0.5倍慢放反转→14-28秒1.5倍收尾</p><p><b>技巧7：互动诱导</b></p><p>15秒处抛AB选择题（"选红色还是黑色？评论区告诉我"），评论量+300%</p>'},
+  {ico:'🚀',tt:'普通人内容创业机会盘点',sub:'知识普惠+过程记录+情绪治愈，三条赛道都能走',
+   full:'<p><b>赛道1：知识普惠（说人话）</b></p><p>把专业知识翻译成大白话。法律避坑、金融解读、健康科普。<br>案例："10年配方师教你刷酸不烂脸"比"美妆教程"转化率高200%<br><b>你的方向：</b>把练习经验翻译成"我的身体记录"——知识分享类有流量扶持</p><p><b>赛道2：过程记录（真实感）</b></p><p>30天打卡、创业日记、探店实拍。真实场景引发共鸣。<br>案例："5秒解决快递盒堆积"配合意外结局，完播率+37%<br><b>你的方向：</b>走路第N天、一年前vs现在——天然就是过程记录</p><p><b>赛道3：情绪治愈（陪伴感）</b></p><p>2025最吃香的5种内容：沉浸式体验、知识解构、情绪治愈、技术流、行业揭秘<br><b>你的方向：</b>冥想/睡前系列就是情绪治愈，中老年增量市场巨大</p><p><b>变现路径段位：</b>日更3条月入3000→建社群月入1万→多平台矩阵月入3万→直播+课程+IP月入10万+</p>'},
+  {ico:'📊',tt:'跨平台分发策略：一份素材三份收益',sub:'同一内容改三版发三平台，曝光量翻倍',
+   full:'<p><b>核心策略：</b>同一份内容改三版分发，降低单一平台风险+总曝光翻倍。</p><p><b>视频号版（主阵地）：</b></p><p>竖屏9:16，强化人物表情和口播，发布后30分钟内回评论（算法加权）。适合知识分享+情感共鸣。</p><p><b>小红书版：</b></p><p>视频内容转图文（封面+文字卡片），封面用"对比图+痛点标题"。搜索流量占38%，关键词布局比粉丝量更重要。适合清单型、场景化种草。</p><p><b>抖音版：</b></p><p>竖屏，前5秒强钩子，用热门BGM和卡点。2025算法新增"结构复杂度"评分，多轨道编辑可提升20%原创度。</p><p><b>实操：</b></p><p>1. 拍一条视频号内容（1-3分钟）<br>2. 截取高光帧做小红书封面+3-5张文字卡片<br>3. 剪15秒高燃片段发抖音<br>4. 三个平台发布时间错开：视频号晚8点、小红书12:00或21:00、抖音12:00/19:00/21:00</p>'}
+];
+function nextDeadline(){
+  var y=now.getFullYear(),mds=[[0,15],[3,15],[6,15],[9,15]],best=null;
+  for(var i=0;i<mds.length;i++){
+    var d=new Date(y,mds[i][0],mds[i][1]);
+    if(d<now)d=new Date(y+1,mds[i][0],mds[i][1]);
+    if(!best||d<best.d)best={d:d,md:mds[i]};
+  }
+  return best;
+}
+function renderBanner(){
+  if(homeTab!=='概览'||!$('bIco'))return;
+  var b=nextDeadline(),days=Math.ceil((b.d-now)/86400000);
+  if(days<=31){
+    $('bIco').textContent='📌';
+    $('bTt').textContent='季度报税 · '+(b.d.getMonth()+1)+'月'+b.d.getDate()+'日';
+    $('bSub').textContent='还剩 '+days+' 天 · 点击查看操作指南';
+    $('banner').className='banner tax';$('bDots').style.display='none';
+  }else{
+    var n=newsItems[newsIdx%newsItems.length];
+    $('bIco').textContent=n.ico;$('bTt').textContent=n.tt;$('bSub').textContent=n.sub;
+    $('banner').className='banner news';$('bDots').style.display='flex';
+    var ds=$('bDots').children;
+    for(var i=0;i<3;i++)ds[i].className=(i===newsIdx%3)?'on':'';
+  }
+}
+setInterval(function(){newsIdx++;renderBanner()},5000);
+function bannerTap(){
+  var b=nextDeadline(),days=Math.ceil((b.d-now)/86400000);
+  if(days<=31){
+    showDetail('📅 季度报税操作指南',newsItems[3].full);
+  }else{
+    var n=newsItems[newsIdx%newsItems.length];
+    showDetail(n.ico+' '+n.tt,n.full);
+  }
+}
+
+/* ---------- 内容详情弹层 ---------- */
+function showDetail(title,body){
+  $('dTitle').textContent=title;
+  $('dBody').innerHTML=body;
+  $('dMask').classList.add('show');
+}
+function closeDetail(){$('dMask').classList.remove('show')}
+
+/* ---------- 每日计划 ---------- */
+function todayTasks(){
+  var d=now.getDay(),t=[
+    {t:'身体练习 15 分钟',m:'慢节奏 · 状态好可以加 5 分钟',tag:'日常'},
+    {t:'每日 5 词',m:'点首页「每日5词」→ 5 个生活场景词',tag:'学习'}
+  ];
+  if(d===1||d===3||d===5)t.push({t:'拍摄 + 发布视频号',m:'本周第 '+(d===1?1:d===3?2:3)+' 条 · 一三五节奏 · 晚 8 点发布',tag:'视频'});
+  if(d===2||d===4)t.push({t:'小红书图文',m:'视频号内容转图文 · 每周 2-3 篇 · 12:00 或 21:00',tag:'图文'});
+  if(d===0)t.push({t:'直播准备 / 直播 20:00',m:'每周 1 场 · 提前 30 分钟测试设备',tag:'直播'});
+  if(d===6)t.push({t:'选题 + 写下周 3 条脚本',m:'点「选题灵感」→ 换一批找感觉',tag:'脚本'});
+  t.push({t:'数据复盘',m:'看昨天 3 平台数据 · 记 1 条进步',tag:'复盘'});
+  return t;
+}
+var planTab='今日';
+var planTabs=[
+  {k:'今日',i:'📅',l:'今日'},
+  {k:'本周',i:'🗓️',l:'本周'},
+  {k:'节奏',i:'🎯',l:'节奏'}
+];
+function setPlanTab(k){planTab=k;renderPlan()}
+function renderPlan(){
+  $('planSub').textContent=(now.getMonth()+1)+'月'+now.getDate()+'日 · 按全网起号最优频率生成';
+  renderNav('planNav',planTabs,planTab,'setPlanTab');
+  var tasks=todayTasks(),done=store.get('wb_tasks_'+key,{});
+  var cnt=0;for(var i=0;i<tasks.length;i++)if(done[tasks[i].t])cnt++;
+  var html='';
+  if(planTab==='今日'){
+    html+='<div class="progress"><div class="pt"><span>今日进度</span><span>'+cnt+'/'+tasks.length+'</span></div><div class="pbar"><i style="width:'+(tasks.length?cnt/tasks.length*100:0)+'%"></i></div></div>';
+    var hasMedia=tasks.some(function(x){return ['视频','图文','直播','脚本'].indexOf(x.tag)>=0});
+    if(hasMedia)html+='<div class="rulepop"><div class="rp-h">⚠️ 发布前规则速查</div><ul><li>① 标签禁用疾病名 / 医疗词（神经损伤、康复训练、足内翻…）</li><li>② 口播避开「治疗 / 修复 / 治愈 / 疗法」——只说「我的日常练习」</li><li>③ 直播不承诺任何效果 · 用「练习记录」代替「课程」</li></ul></div>';
+    for(var i=0;i<tasks.length;i++){
+      var on=!!done[tasks[i].t];
+      html+='<div class="task'+(on?' done':'')+'"><div class="ck'+(on?' on':'')+'" onclick="toggleTask('+i+')">'+(on?'✓':'')+'</div><div style="flex:1"><div class="tt">'+tasks[i].t+'</div><div class="tm">'+tasks[i].m+'</div></div><div class="tag '+(tasks[i].tag==='日常'?'':tasks[i].tag==='直播'?'coral':tasks[i].tag==='脚本'?'gold':'')+'">'+tasks[i].tag+'</div></div>';
+    }
+  }else if(planTab==='本周'){
+    var week=[
+      {d:'周一',t:'拍摄+发布视频号',m:'本周第1条 · 晚8点',tag:'视频'},
+      {d:'周二',t:'小红书图文',m:'视频号内容转图文 · 12:00或21:00',tag:'图文'},
+      {d:'周三',t:'拍摄+发布视频号',m:'本周第2条 · 晚8点',tag:'视频'},
+      {d:'周四',t:'小红书图文',m:'每周2-3篇',tag:'图文'},
+      {d:'周五',t:'拍摄+发布视频号',m:'本周第3条 · 晚8点',tag:'视频'},
+      {d:'周六',t:'选题+写脚本',m:'下周3条脚本',tag:'脚本'},
+      {d:'周日',t:'直播 20:00',m:'每周1场 · 提前30分钟测试',tag:'直播'}
+    ];
+    var todayD=WD[now.getDay()];
+    html+='<div class="side-hint">本周节奏 · 今天星期'+todayD+'</div>';
+    for(var i=0;i<week.length;i++){
+      var isToday=week[i].d==='周'+todayD;
+      html+='<div class="task'+(isToday?'':' done')+'" style="'+(isToday?'border:2px solid var(--coral)':'')+'"><div style="width:22px;text-align:center;font-size:13px;font-weight:600;color:'+(isToday?'var(--coral)':'var(--gray)')+'">'+week[i].d.replace('周','')+'</div><div style="flex:1"><div class="tt">'+week[i].t+'</div><div class="tm">'+week[i].m+'</div></div><div class="tag '+(week[i].tag==='直播'?'coral':week[i].tag==='脚本'?'gold':'')+'">'+week[i].tag+(isToday?' · 今天':'')+'</div></div>';
+    }
+    html+='<div class="card" style="text-align:center"><div class="muted">每天还有：身体练习15分钟 + 每日5词 + 数据复盘</div></div>';
+  }else if(planTab==='节奏'){
+    html+='<div class="side-hint">全网最优发布频率</div>';
+    html+='<div class="card"><h3>视频号（主阵地）</h3><div class="muted">每周3条 · 一/三/五晚8点<br>每条30秒-3分钟 · 发布后30分钟内回评论<br>主阵地，流量最好，首发</div></div>';
+    html+='<div class="card"><h3>小红书</h3><div class="muted">每周2-3篇 · 12:00或21:00<br>视频内容转图文（封面+文字卡片）<br>封面用「养生」「十分钟」等中老年敏感词</div></div>';
+    html+='<div class="card"><h3>抖音（第二阵地）</h3><div class="muted">同步视频号 · 每周3-5条<br>12:00 / 19:00 / 21:00<br>不额外拍，直接用视频号素材</div></div>';
+    html+='<div class="card"><h3>直播</h3><div class="muted">每周1场 · 周日20:00<br>提前30分钟测试设备<br>直播不承诺效果 · 用「练习记录」代替「课程」</div></div>';
+    html+='<div class="card" style="background:var(--teal-lt)"><div style="font-size:14px;color:var(--teal-dk);font-weight:600">💡 稳定 &gt; 高频</div><div class="muted" style="margin-top:6px">算法看的是持续性，不是一天发几条。<br>稳定更新3条/周 &gt; 突击发10条然后停更。<br>慢慢来，身体和账号都是。</div></div>';
+  }
+  $('planMain').innerHTML=html;
+}
+function toggleTask(i){
+  var tasks=todayTasks(),done=store.get('wb_tasks_'+key,{});
+  done[tasks[i].t]=!done[tasks[i].t];
+  store.set('wb_tasks_'+key,done);renderPlan();renderHome();
+}
+
+/* ---------- 选题灵感 ---------- */
+var topicPool=[
+  {t:'睡前十分钟身体放松（跟练版）',c:'视频号',m:'教程向 · 老粉收藏型',
+   script:'<b>0-3秒：</b>画面：你闭眼坐在瑜伽垫上，灯光暖黄。字幕："睡前10分钟，身体慢慢松下来"<br><b>3-15秒：</b>跟练引导：从头到脚，每个部位5秒口播+动作演示<br><b>15-25秒：</b>关键转折："今天的状态比昨天好一点"<br><b>25-30秒：</b>收尾："晚安，慢慢来"',
+   edit:'<b>剪辑：</b>剪映「智能字幕」自动出字+温柔女声AI配音<br><b>BGM：</b>剪映音乐库搜"冥想"，音量40%<br><b>变速：</b>动作演示0.8x慢放，过渡2x快进<br><b>调色：</b>暖黄滤镜，亮度+5，色温+3<br><b>关键帧：</b>开头缓推放大→结尾缓拉缩小，呼吸感'},
+  {t:'晨起十分钟唤醒（中老年友好）',c:'视频号',m:'养生系列 · 拓宽受众',
+   script:'<b>0-3秒：</b>画面：窗帘拉开，阳光洒进来。字幕："起床后这样做，身体一天都舒服"<br><b>3-20秒：</b>5个晨起动作，每个15秒，口播"慢慢来不着急"<br><b>20-28秒：</b>"不管你现在身体什么状态，都可以跟着做"<br><b>28-30秒：</b>"关注我，每天一起练习"',
+   edit:'<b>剪辑：</b>剪映自动字幕+AI配音（温柔阿姨声）<br><b>BGM：</b>轻快纯音乐，音量30%<br><b>转场：</b>动作之间用"叠化"0.3秒<br><b>字幕：</b>大字号32px白底黑字，中老年看得清<br><b>发布：</b>早6-7点发，卡中老年起床时间'},
+  {t:'粉丝问答合集：练多久有变化？',c:'视频号',m:'互动向 · 评论区素材',
+   script:'<b>0-3秒：</b>"你们问最多的一个问题：练多久才有变化？"<br><b>3-15秒：</b>展示3条粉丝评论截图+你的回答<br><b>15-25秒：</b>"我的答案是——每个人的身体不一样，但坚持一定会有"<br><b>25-30秒：</b>"你练了多久了？评论区告诉我"',
+   edit:'<b>剪辑：</b>评论截图用剪映"画中画"叠加+蒙版裁剪<br><b>变速：</b>截图展示0.5x慢放，口播1x正常<br><b>音效：</b>截图出现时加"叮"声（听觉锚点）<br><b>结尾：</b>加"评论区见"贴纸+引导关注动画'},
+  {t:'身体突然不听话了，我是怎么过来的',c:'小红书',m:'情绪共鸣 · 评论区互动高',
+   script:'<b>标题：</b>身体突然不听话了，我是怎么过来的<br><b>封面：</b>你坐在窗边，暖光，文字"那段时间我以为完了"<br><b>正文卡片1：</b>最难的时候是什么样（口语化描述，不说病名）<br><b>正文卡片2：</b>我是怎么一点点开始的<br><b>正文卡片3：</b>现在比以前好了多少<br><b>结尾卡片：</b>"不管你现在什么状态，慢慢来"',
+   edit:'<b>小红书图文：</b>封面用Canva/剪映做，暖色调+大字<br><b>卡片：</b>5-6张文字卡片，每张一个段落<br><b>字体：</b>思源黑体，大号，行距1.8<br><b>色调：</b>统一暖米色底+珊瑚色重点字<br><b>标签：</b>#身体突然不听话了 #坚持 #慢慢来 #我的身体记录'},
+  {t:'大理旅居的一天｜慢慢来',c:'小红书',m:'生活流 · 图文易出爆款',
+   script:'<b>封面：</b>你在大理古城/洱海边，文字"大理的一天 · 慢慢来"<br><b>卡片1：</b>晨起 · 窗外的光 + 一杯水<br><b>卡片2：</b>练习 · 15分钟身体记录<br><b>卡片3：</b>买菜 · 菜市场的烟火气<br><b>卡片4：</b>拍视频 · 灯光和脚架<br><b>卡片5：</b>傍晚 · 洱海散步<br><b>卡片6：</b>"慢慢来，就是最快的方式"',
+   edit:'<b>图文排版：</b>6张卡片，统一滤镜（青柠20%+暖色调）<br><b>字体：</b>手写体标题+思源黑体正文<br><b>封面：</b>大字+人像，点击率最高<br><b>发布：</b>12:00或21:00，卡午间/睡前浏览'},
+  {t:'极简练习装备分享（全套不到300）',c:'小红书',m:'清单型 · 收藏率高',
+   script:'<b>封面：</b>所有装备摆一排，文字"全套不到300元"<br><b>卡片1：</b>瑜伽垫（39元）+ 为什么选它<br><b>卡片2：</b>手机支架（19.9元）+ 使用场景<br><b>卡片3：</b>补光灯（70元）+ 前后对比<br><b>卡片4：</b>领夹麦（百元内）+ 音质对比<br><b>卡片5：</b>"不需要贵的东西，开始就好"',
+   edit:'<b>拍摄：</b>俯拍装备全家福+每件单品特写<br><b>标签：</b>价格标签用剪映贴纸叠加<br><b>对比：</b>有灯vs没灯、有麦vs没麦，用Before/After<br><b>调色：</b>干净明亮，亮度+8，锐化+15<br><b>收藏引导：</b>最后一张卡片"收藏备用"'},
+  {t:'我的大理一日｜慢慢来生活记录',c:'抖音',m:'生活流 · 轻松涨粉',
+   script:'<b>0-3秒：</b>快剪大理5个画面（洱海/古城/苍山/阳光/猫）+BGM卡点<br><b>3-15秒：</b>晨起→练习→出门→买菜，每场景2-3秒<br><b>15-25秒：</b>傍晚散步，慢镜头，口播"在大理，时间过得特别慢"<br><b>25-30秒：</b>回家路上，"慢慢来，就是生活"',
+   edit:'<b>变速狙击：</b>0-3秒3倍速快剪→中间1x→傍晚0.5x慢放<br><b>BGM：</b>热门治愈系纯音乐，自动踩点<br><b>转场：</b>场景之间用"运镜模糊"0.2秒<br><b>调色：</b>电影感，降亮度+暗角+色温+5<br><b>字幕：</b>底部居中，白字黑描边'},
+  {t:'30秒一个脚趾小练习',c:'抖音',m:'短平快 · 完播率高',
+   script:'<b>0-3秒：</b>"一个被忽略的小动作，走路稳了很多"<br><b>3-25秒：</b>脚趾抓毛巾/分趾练习，侧拍特写，口播"慢慢来"<br><b>25-30秒：</b>"练了XX天后的变化"+前后对比<br><b>结尾：</b>"你也试试，评论区告诉我感觉"',
+   edit:'<b>特写：</b>手机近拍脚部，补光灯侧面打光<br><b>变速：</b>关键动作0.5x慢放展示细节<br><b>对比：</b>Before/After用分屏，蒙版切割<br><b>音效：</b>关键动作加"咔"声<br><b>字幕：</b>大字号，重点词红色高亮<br><b>标签：</b>#日常练习 #走路 #平衡练习'},
+  {t:'走路前后对比短片（10秒）',c:'抖音',m:'对比冲击 · 涨粉最强',
+   script:'<b>0-3秒：</b>"一年前的我 vs 现在"（分屏左右对比）<br><b>3-7秒：</b>左边：一年前走路画面（不稳/慢）<br><b>7-10秒：</b>右边：现在走路画面（稳/快），"慢慢来，真的会变好"',
+   edit:'<b>分屏：</b>剪映导入两段视频→上层加线性蒙版→调羽化<br><b>变速：</b>两段同速1x，视觉对比最强<br><b>BGM：</b>治愈系钢琴，高潮点卡在切换瞬间<br><b>调色：</b>左边偏灰暗（青灰滤镜60%），右边暖亮<br><b>字幕：</b>"一年前"和"现在"标注在对应画面<br><b>发布：</b>晚8-10点，抖音流量高峰'},
+  {t:'Vlog｜重新学走路的第300天',c:'Vlog',m:'日常记录 · 粉丝追更型',
+   script:'<b>0-3秒：</b>"第300天"大字幕+你走路的背影<br><b>3-15秒：</b>今天的练习日常（晨起→练习→出门走）<br><b>15-25秒：</b>翻出第1天的视频，"那时候连站都站不稳"<br><b>25-35秒：</b>回到今天，"300天，一步一步走过来了"<br><b>35-40秒：</b>"下一个300天，继续慢慢来"',
+   edit:'<b>剪辑：</b>剪映时间线，3段式结构（现在→回忆→现在）<br><b>变速：</b>第1天画面0.7x慢放+青灰滤镜，今天画面1x暖色<br><b>BGM：</b>励志钢琴曲，从回忆段开始渐强<br><b>转场：</b>回忆插入用"闪白"0.3秒<br><b>字幕：</b>天数计数器在画面角落<br><b>关键帧：</b>结尾缓推放大背影→黑屏→"继续"'},
+  {t:'一年前 vs 现在：走路变化对比',c:'Vlog',m:'进步对比 · 涨粉最强类型',
+   script:'<b>0-3秒：</b>分屏："一年前 vs 现在" + 同一段路<br><b>3-10秒：</b>左边：一年前走这段路的样子<br><b>10-17秒：</b>右边：现在走同一段路<br><b>17-25秒：</b>"不是奇迹，是每天10分钟"<br><b>25-30秒：</b>"你的第1天从今天开始"',
+   edit:'<b>拍摄：</b>同一段路、同一角度拍两遍<br><b>分屏：</b>剪映画中画+线性蒙版50%切割<br><b>变速：</b>两段同速，同步开始同步结束<br><b>BGM：</b>先低沉后明亮，转折点在分屏切换<br><b>调色：</b>左灰右暖，对比最强<br><b>字幕：</b>关键数据标注（步数/时长/步态变化用口语）'},
+  {t:'深夜一个人练走，我在想什么',c:'Vlog',m:'情绪向 · 共鸣最深',
+   script:'<b>0-3秒：</b>深夜客厅，只有一盏灯。字幕："23:47，又是一个人练"<br><b>3-15秒：</b>安静地练习，只有呼吸声和脚步声<br><b>15-25秒：</b>口播内心独白："有时候会想，为什么是我。但想了也没用，不如走两步"<br><b>25-35秒：</b>继续走，"后来我发现，不是每一步都要比上一步好"<br><b>35-40秒：</b>关灯，"晚安"',
+   edit:'<b>拍摄：</b>手机固定+补光灯打到最暗+夜间模式<br><b>声音：</b>领夹麦收呼吸和脚步声，不加BGM（沉浸感）<br><b>调色：</b>暗调，亮度-5，对比度+15，色温-8（冷夜感）<br><b>变速：</b>全程1x，不加变速（真实感）<br><b>字幕：</b>白色小字，底部偏上，不抢画面<br><b>关键帧：</b>最后关灯瞬间，画面渐黑'},
+  {t:'康复日常Vlog｜今天也慢慢来',c:'Vlog',m:'治愈系 · 中老年也爱看',
+   script:'<b>0-3秒：</b>阳光+猫+你的微笑，"今天也是慢慢来的一天"<br><b>3-15秒：</b>晨起练习（3个动作，每个5秒）<br><b>15-25秒：</b>给猫喂饭+倒杯水（生活=训练）<br><b>25-35秒：</b>出门走一小段，"今天比昨天多走了几步"<br><b>35-40秒：</b>回家，"慢慢来，不着急"',
+   edit:'<b>BGM：</b>治愈系尤克里里纯音乐，音量25%<br><b>调色：</b>暖黄滤镜，亮度+5，饱和度+8<br><b>转场：</b>场景间用"叠化"0.5秒（温柔感）<br><b>字幕：</b>大号圆体，中老年友好<br><b>音效：</b>猫叫声、倒水声加对应音效<br><b>发布：</b>视频号晚8点+小红书转图文'},
+  {t:'状态不好的一天，我允许自己休息',c:'视频号',m:'真实向 · 30%低谷内容',
+   script:'<b>0-3秒：</b>"今天状态不太好" + 你坐在床边的画面<br><b>3-15秒：</b>"没睡好/有点累/腿有点紧，今天不练了"<br><b>15-25秒：</b>"但休息不是退步，是身体在说'今天复习就好'"<br><b>25-30秒：</b>"如果你今天也不在状态，没关系，明天再来"',
+   edit:'<b>拍摄：</b>手机手持+自然光，不加补光（真实感）<br><b>BGM：</b>轻柔钢琴，音量20%<br><b>调色：</b>不加滤镜，原色（真实）<br><b>字幕：</b>白字黑描边，底部<br><b>变速：</b>全程1x，不做花哨剪辑<br><b>标签：</b>#坚持 #慢慢来 #身体在变好 #一个人也可以'},
+  {t:'练习第 N 天：一个肉眼可见的小进步',c:'小红书',m:'时间跨度对比 · 有感染力',
+   script:'<b>封面：</b>左右对比图，文字"第1天 vs 第N天"<br><b>卡片1：</b>第1天的情况（口语描述，不说病名）<br><b>卡片2：</b>中间某个关键转折点<br><b>卡片3：</b>今天的小进步（具体到某个动作）<br><b>卡片4：</b>"不是一夜变好，是一点一点变好"<br><b>卡片5：</b>"你也在一起走"',
+   edit:'<b>封面：</b>剪映截图+Canva拼图，左右分屏<br><b>色调：</b>左边灰暗右边暖亮，统一暖色系<br><b>字体：</b>思源黑体大号，关键数字放大<br><b>标签：</b>#变化 #回头看 #时间会给你答案 #我的身体记录<br><b>发布：</b>小红书21:00，配文30字以内'}
+];
+var topicFilter='全部',topicSeed=0;
+var topicTabs=[
+  {k:'全部',i:'📚',l:'全部'},
+  {k:'视频号',i:'📺',l:'视频号'},
+  {k:'小红书',i:'📕',l:'小红书'},
+  {k:'抖音',i:'🎵',l:'抖音'},
+  {k:'Vlog',i:'🎬',l:'Vlog'}
+];
+function shuffleTopics(){topicSeed++;renderTopics()}
+function setTopicTab(k){topicFilter=k;renderTopics()}
+function renderTopics(){
+  renderNav('topicNav',topicTabs,topicFilter,'setTopicTab');
+  var list=topicPool.filter(function(x){return topicFilter==='全部'||x.c===topicFilter});
+  if(topicSeed%2===1)list=list.slice().reverse();
+  var cnt=list.length;
+  var h='';
+  if(!cnt){
+    h='<div class="empty">这个分类暂时没有选题，换一批试试</div>';
+  }else{
+    h+='<div class="side-hint">'+topicFilter+' · '+cnt+' 个<span class="tag coral">点卡片展开脚本+剪辑</span></div>';
+    for(var i=0;i<cnt;i++){
+      var x=list[i];
+      var idx=topicPool.indexOf(x);
+      h+='<div class="topic-card" onclick="toggleTopic('+idx+')"><div class="tp-t">'+x.t+'</div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px"><span class="tag">'+x.c+'</span><span class="tp-hot">适合指数 '+(4+i%2)+'★</span></div><div class="tp-how"><b>📌 创作建议：</b>'+x.m+'</div><div class="tp-full" id="tpf-'+idx+'"><h4>📝 脚本大纲</h4><div class="tp-script">'+x.script+'</div><h4>✂️ 剪映剪辑方法</h4><div class="tp-edit">'+x.edit+'</div></div><div class="tp-toggle" id="tpt-'+idx+'">点击展开脚本+剪辑 ▼</div></div>';
+    }
+  }
+  $('topicMain').innerHTML=h;
+}
+function toggleTopic(idx){
+  var f=$('tpf-'+idx),t=$('tpt-'+idx);
+  if(f.classList.contains('show')){
+    f.classList.remove('show');t.textContent='点击展开脚本+剪辑 ▼';
+  }else{
+    f.classList.add('show');t.textContent='收起 ▲';
+  }
+}
+
+/* ---------- 平台规则 ---------- */
+var ruleData={
+  '视频号':[
+    {lv:'hi',t:'话题标签：绝对禁区',d:'标签是机器直接扫描的高危区域，比口播文案更危险。',
+     how:'<b>绝对不能用：</b>神经损伤 / 脊髓损伤 / 脑脊髓炎 / 康复训练 / 治疗 / 足内翻 / 足下垂 / 肌张力<br><b>安全标签：</b>#走路不稳 #身体在变好 #慢慢来 #我的身体记录 #日常练习<br><b>曾有账号因此被封30天。</b>'},
+    {lv:'hi',t:'口播与文案：不说疗效',d:'广告法第十七条：非医疗机构不得涉及疾病治疗功能。处罚10万-100万。',
+     how:'<b>禁用词：</b>治疗 / 修复 / 治愈 / 疗法 / 调理内分泌 / 修复受损细胞 / 中医调理 / 穴位治疗 / 经络疏通<br><b>安全替代：</b>「我的日常练习」「身体在变好」「我的方式」「慢慢来」<br><b>课包不说"课程/课包/购买/价格"，说"练习记录/分享/整理好了"</b>'},
+    {lv:'ok',t:'安全标签组合',d:'每条视频用这套标签，不会触发机器审核。',
+     how:'<b>核心（每条都用）：</b>#走路不稳 #身体在变好 #慢慢来 #我的身体记录 #日常练习<br><b>冥想类追加：</b>#养生 #冥想 #静心 #睡前冥想<br><b>进步对比类追加：</b>#变化 #回头看 #时间会给你答案<br><b>情绪类追加：</b>#坚持 #一个人也可以 #身体突然不听话了'},
+    {lv:'mid',t:'发布节奏',d:'稳定更新比高频更重要，算法看的是持续性。',
+     how:'<b>频率：</b>每周3条，一/三/五晚8点发布<br><b>主阵地，首发。</b>视频号流量最好<br><b>每条时长：</b>30秒-3分钟，短平快完播率高<br><b>发布后30分钟内回复评论，算法会加权</b>'}
+  ],
+  '小红书':[
+    {lv:'hi',t:'同样避开医疗术语',d:'标签和正文都按视频号红线执行，别换平台就放松。',
+     how:'<b>小红书审核比视频号更严</b>，标签和正文都查。<br><b>禁用词同视频号。</b>不要以为换个平台就能用「康复」「治疗」。<br><b>安全做法：</b>正文用第一人称叙事「我的经历」「我的练习」，不教别人怎么做。'},
+    {lv:'mid',t:'封面策略',d:'封面文字决定点击率，中老年群体对特定词敏感。',
+     how:'<b>封面文字用：</b>「养生」「十分钟」「慢慢来」「每天坚持」<br><b>不要用：</b>任何疾病名、医疗术语<br><b>封面风格：</b>暖色调、文字大、一眼看懂在讲什么<br><b>中老年敏感词=高点击率</b>'},
+    {lv:'ok',t:'形式与节奏',d:'视频内容转图文，低门槛高产。',
+     how:'<b>形式：</b>视频号内容转图文（封面+文字卡片）<br><b>频率：</b>每周2-3篇<br><b>时间：</b>12:00 或 21:00<br><b>标题公式：</b>「我XX天后发现…」/「原来XX可以这样做」'},
+    {lv:'ok',t:'安全标签',d:'小红书标签组合，配合中老年养生方向。',
+     how:'#日常练习 #变化 #回头看 #时间会给你答案 #养生 #冥想 #静心'}
+  ],
+  '抖音':[
+    {lv:'hi',t:'高危词同上 + 封面字也查',d:'抖音机器审核最严格，封面文字也会被OCR扫描。',
+     how:'<b>绝对不出现：</b>瘫痪 / 确诊 / 康复 / 治疗 / 神经损伤<br><b>封面文字同样被扫描。</b>别以为只查口播<br><b>安全做法：</b>封面只写「慢慢来」「第N天」这类中性词'},
+    {lv:'mid',t:'实名状态需先确认',d:'先确认封禁范围，再决定投入程度。',
+     how:'<b>需确认：</b>是账号封禁还是人脸封禁？<br>· 账号封禁→换号注册<br>· 人脸封禁→用男朋友身份证注册新号<br><b>确认后再投入精力，别白拍。</b>'},
+    {lv:'ok',t:'节奏',d:'同步视频号内容，多时段覆盖。',
+     how:'<b>频率：</b>同步视频号，每周3-5条<br><b>时间：</b>12:00 / 19:00 / 21:00<br><b>第二阵地，同步发。</b>不额外拍，直接用视频号素材'}
+  ]
+};
+var rulePlat='视频号';
+var ruleTabs=[
+  {k:'视频号',i:'📺',l:'视频号'},
+  {k:'小红书',i:'📕',l:'小红书'},
+  {k:'抖音',i:'🎵',l:'抖音'}
+];
+function setRuleTab(k){rulePlat=k;renderRules()}
+function renderRules(){
+  renderNav('ruleNav',ruleTabs,rulePlat,'setRuleTab');
+  var list=ruleData[rulePlat],nm={hi:'高危',mid:'注意',ok:'安全'};
+  var h='<div class="side-hint">'+rulePlat+' · '+list.length+' 条规则</div>';
+  for(var j=0;j<list.length;j++){
+    h+='<div class="rule"><span class="badge '+list[j].lv+'">'+nm[list[j].lv]+'</span><div class="rr-t">'+list[j].t+'</div><div class="rr-d">'+list[j].d+'</div><div class="rr-how">'+list[j].how+'</div></div>';
+  }
+  $('ruleMain').innerHTML=h;
+}
+
+/* ---------- 记账 ---------- */
+function getBudget(){return store.get('wb_budget',3600)}
+var moneyTab='汇总';
+var moneyTabs=[
+  {k:'汇总',i:'📊',l:'汇总'},
+  {k:'支出',i:'💸',l:'支出'},
+  {k:'收入',i:'💰',l:'收入'}
+];
+function setMoneyTab(k){moneyTab=k;renderMoney()}
+function renderMoney(){
+  $('moneyMonth').textContent=(now.getMonth()+1)+'月 · 查账征收 · 每季零申报';
+  renderNav('moneyNav',moneyTabs,moneyTab,'setMoneyTab');
+  var es=store.get('wb_entries',[]),m=now.getMonth()+1;
+  var expense=0,income=0;
+  var expEntries=[],incEntries=[];
+  for(var i=0;i<es.length;i++){
+    var d=new Date(es[i].date);
+    if(d.getMonth()+1===m){
+      if(es[i].type==='income'){income+=es[i].amt;incEntries.push(es[i])}
+      else{expense+=es[i].amt;expEntries.push(es[i])}
+    }
+  }
+  var allEntries=es.filter(function(e){var d=new Date(e.date);return d.getMonth()+1===m});
+  var budget=getBudget(),net=income-expense;
+  var html='';
+  if(moneyTab==='汇总'){
+    html+='<div class="money-card"><div class="ml">本月支出</div><div class="mv">¥ '+fmtM(expense)+'</div><div class="mr" onclick="editBudget()"><span>预算 ¥'+fmtM(budget)+' ✏️</span><span>剩余 ¥'+fmtM(budget-expense)+'</span></div></div>';
+    html+='<div class="money-summary"><div class="ms"><div class="ml">本月收入</div><div class="mv teal">¥'+fmtM(income)+'</div></div><div class="ms"><div class="ml">本月支出</div><div class="mv coral">¥'+fmtM(expense)+'</div></div><div class="ms"><div class="ml">净额</div><div class="mv '+(net>=0?'teal':'coral')+'">'+(net>=0?'+':'-')+'¥'+fmtM(Math.abs(net))+'</div></div></div>';
+    html+='<div class="sec-h">最近记录 ('+allEntries.length+')</div>';
+    if(!allEntries.length){html+='<div class="empty">还没有记录 · 点「支出」记第一笔</div>'}
+    for(var i=allEntries.length-1;i>=0;i--){
+      var e=allEntries[i],isIn=e.type==='income';
+      var ico=isIn?{'课包收入':'📦','退款/退货':'↩️','平台补贴':'🎁','其他收入':'💰'}[e.cat]||'💰'
+             :{'餐饮·外卖':'🍜','餐饮·买菜':'🥬','餐饮·水果':'🍎','服饰':'👗','日用品':'🪴','设备·可抵税':'🎙️','其他':'✏️'}[e.cat]||'✏️';
+      html+='<div class="entry"><div class="e-ico'+(isIn?' income':'')+'">'+ico+'</div><div class="e-body"><div class="e-t">'+e.title+'</div><div class="e-m">'+e.date.slice(5)+' · '+e.cat+(isIn?' · 收入':'')+'</div></div><div class="e-amt'+(isIn?' income':'')+'">'+(isIn?'+':'-')+fmtM(e.amt)+'</div><button class="e-del" onclick="delEntry('+e.id+')">✕</button></div>';
+    }
+  }else if(moneyTab==='支出'){
+    html+='<div class="quick"><button class="q-item" onclick="quickAdd(\'餐饮·外卖\')"><div class="qi">🛵</div><div class="ql">外卖</div></button><button class="q-item" onclick="quickAdd(\'餐饮·买菜\')"><div class="qi">🥬</div><div class="ql">买菜</div></button><button class="q-item" onclick="quickAdd(\'餐饮·水果\')"><div class="qi">🍎</div><div class="ql">水果</div></button><button class="q-item income" onclick="openIncomeSheet()"><div class="qi">💰</div><div class="ql">收入</div></button><button class="q-item add" onclick="openSheet()"><div class="qi">✏️</div><div class="ql">记一笔</div></button></div>';
+    html+='<div class="sec-h">支出记录 ('+expEntries.length+')</div>';
+    if(!expEntries.length){html+='<div class="empty">还没有支出记录</div>'}
+    for(var i=expEntries.length-1;i>=0;i--){
+      var e=expEntries[i];
+      var ico={'餐饮·外卖':'🍜','餐饮·买菜':'🥬','餐饮·水果':'🍎','服饰':'👗','日用品':'🪴','设备·可抵税':'🎙️','其他':'✏️'}[e.cat]||'✏️';
+      html+='<div class="entry"><div class="e-ico">'+ico+'</div><div class="e-body"><div class="e-t">'+e.title+'</div><div class="e-m">'+e.date.slice(5)+' · '+e.cat+'</div></div><div class="e-amt">-'+fmtM(e.amt)+'</div><button class="e-del" onclick="delEntry('+e.id+')">✕</button></div>';
+    }
+  }else if(moneyTab==='收入'){
+    html+='<button class="btn teal" style="margin-bottom:14px" onclick="openIncomeSheet()">+ 记一笔收入 / 退款</button>';
+    html+='<div class="sec-h">收入记录 ('+incEntries.length+')</div>';
+    if(!incEntries.length){html+='<div class="empty">还没有收入记录</div>'}
+    for(var i=incEntries.length-1;i>=0;i--){
+      var e=incEntries[i];
+      var ico={'课包收入':'📦','退款/退货':'↩️','平台补贴':'🎁','其他收入':'💰'}[e.cat]||'💰';
+      html+='<div class="entry"><div class="e-ico income">'+ico+'</div><div class="e-body"><div class="e-t">'+e.title+'</div><div class="e-m">'+e.date.slice(5)+' · '+e.cat+'</div></div><div class="e-amt income">+'+fmtM(e.amt)+'</div><button class="e-del" onclick="delEntry('+e.id+')">✕</button></div>';
+    }
+  }
+  $('moneyMain').innerHTML=html;
+}
+var quickCtx=null;
+function quickAdd(cat){
+  quickCtx=cat;
+  $('sheetTitle').textContent='记一笔 · '+cat;
+  $('fTitleRow').style.display='block';
+  $('fTypeRow').style.display='none';
+  $('fCat').value=cat;$('fAmt').value='';$('fTitle').value='';
+  $('fTitle').placeholder='具体是什么？比如：螺蛳粉 / 苹果2斤 / 长裙';
+  $('mask').classList.add('show');setTimeout(function(){$('fAmt').focus()},150);
+}
+function openSheet(){
+  quickCtx=null;
+  $('sheetTitle').textContent='记一笔';
+  $('fTitleRow').style.display='block';
+  $('fTypeRow').style.display='block';
+  $('fCat').value='餐饮·外卖';$('fAmt').value='';$('fTitle').value='';$('fType').value='expense';
+  $('fTitle').placeholder='具体是什么？比如：螺蛳粉 / 长裙 / 花架';
+  $('mask').classList.add('show');setTimeout(function(){$('fAmt').focus()},150);
+}
+function closeSheet(){$('mask').classList.remove('show');quickCtx=null}
+function saveEntry(){
+  var amt=parseFloat($('fAmt').value);
+  if(!amt||amt<=0){alert('先填金额～');return}
+  var cat=$('fCat').value;
+  var type=$('fType').value;
+  var title=quickCtx?($('fTitle').value||cat.split('·')[1]||cat):($('fTitle').value||cat);
+  if(cat==='设备·可抵税'&&!$('fTitle').value)title='设备采购（记得留发票）';
+  var es=store.get('wb_entries',[]);
+  es.push({id:Date.now(),title:title,cat:cat,amt:amt,type:type,date:now.getFullYear()+'-'+(now.getMonth()<9?'0':'')+(now.getMonth()+1)+'-'+(now.getDate()<10?'0':'')+now.getDate()});
+  store.set('wb_entries',es);
+  closeSheet();renderMoney();renderHome();
+}
+function delEntry(id){
+  var es=store.get('wb_entries',[]);
+  for(var i=0;i<es.length;i++)if(es[i].id===id)es.splice(i,1);
+  store.set('wb_entries',es);renderMoney();renderHome();
+}
+function openIncomeSheet(){
+  $('iAmt').value='';$('iTitle').value='';$('iCat').value='课包收入';
+  $('incomeMask').classList.add('show');setTimeout(function(){$('iAmt').focus()},150);
+}
+function closeIncomeSheet(){$('incomeMask').classList.remove('show')}
+function saveIncome(){
+  var amt=parseFloat($('iAmt').value);
+  if(!amt||amt<=0){alert('先填金额～');return}
+  var cat=$('iCat').value;
+  var title=$('iTitle').value||cat;
+  var es=store.get('wb_entries',[]);
+  es.push({id:Date.now(),title:title,cat:cat,amt:amt,type:'income',date:now.getFullYear()+'-'+(now.getMonth()<9?'0':'')+(now.getMonth()+1)+'-'+(now.getDate()<10?'0':'')+now.getDate()});
+  store.set('wb_entries',es);
+  closeIncomeSheet();renderMoney();renderHome();
+}
+function editBudget(){
+  $('bAmt').value=getBudget();
+  $('budgetMask').classList.add('show');setTimeout(function(){$('bAmt').focus()},150);
+}
+function closeBudget(){$('budgetMask').classList.remove('show')}
+function saveBudget(){
+  var v=parseFloat($('bAmt').value);
+  if(!v||v<0){alert('填个正数～');return}
+  store.set('wb_budget',v);
+  closeBudget();renderMoney();renderHome();
+}
+
+/* ---------- 每日5词 ---------- */
+var words=[
+  {w:'balance',p:'n. 平衡',ex:'I\'m working on my <b>balance</b>.（我在练平衡）',sc:'练单脚站时拍视频配文',mis:'⚠️ 别说 My balance is very balance。动词形式：I balance on one foot ✓'},
+  {w:'energy',p:'n. 精力',ex:'I don\'t have much <b>energy</b> today.（今天没什么力气）',sc:'状态不好的日子发日常、回评论区',mis:'⚠️ energy 不可数，别说 an energy。'},
+  {w:'posture',p:'n. 姿态',ex:'Good <b>posture</b> helps me walk better.',sc:'讲站姿练习时用',mis:'⚠️ posture 是名词，形容词是 upright。'},
+  {w:'routine',p:'n. 日常惯例',ex:'Practice is part of my daily <b>routine</b>.',sc:'介绍每天练习安排时用',mis:'⚠️ routine ≠ route（路线）。说 my daily route 外国人以为你在用导航。'},
+  {w:'consistency',p:'n. 坚持',ex:'<b>Consistency</b> matters more than intensity.',sc:'评论区鼓励别人 / 写简介',mis:'⚠️ 别拼成 consistence，地道说法是 consistency。'},
+  {w:'pace',p:'n. 节奏',ex:'I\'m finding my own <b>pace</b>.',sc:'视频标题：Find your own pace',mis:'⚠️ keep pace with 是跟上节奏，别写成 keep pace of。'},
+  {w:'stretch',p:'v. 拉伸',ex:'I <b>stretch</b> every morning.',sc:'晨起练习视频',mis:'⚠️ I feel stretched 不是被拉伸，是身心被掏空——说时间不够用。'},
+  {w:'steady',p:'adj. 稳的',ex:'I\'m getting <b>steadier</b> every week.',sc:'进步对比视频文案',mis:'⚠️ steady 俚语里还有「固定交往对象」的意思，语境要对。'},
+  {w:'step',p:'n. 一步',ex:'One <b>step</b> at a time.（一步一步来）',sc:'所有「慢慢来」主题的万能标题',mis:'⚠️ 脚步声是 footsteps，别只说 my steps。'},
+  {w:'rest',p:'n./v. 休息',ex:'<b>Rest</b> is part of training.',sc:'状态不好休息的那天发',mis:'⚠️ rest room 是厕所，想休息说 I need a break。'},
+  {w:'slow',p:'adj./v. 慢',ex:'<b>Slow</b> is fast.（慢就是快）',sc:'账号理念 slogan',mis:'⚠️ 形容动作慢用 slowly，别把 slow 当副词。'},
+  {w:'progress',p:'n. 进步',ex:'Small <b>progress</b> is still progress.',sc:'进步对比类视频结尾金句',mis:'⚠️ progress 不可数，别说 a progress。'},
+  {w:'morning routine',p:'晨间惯例',ex:'My <b>morning routine</b> takes 20 minutes.',sc:'晨起十分钟系列标题',mis:'⚠️ 别写成 morning ritual，那是仪式感更强的说法。'},
+  {w:'gentle',p:'adj. 轻柔的',ex:'Start with <b>gentle</b> movements.',sc:'教中老年观众练习时用',mis:'⚠️ gentle 温和 ≠ weak 虚弱，形容人 kind and gentle ✓。'},
+  {w:'breathe',p:'v. 呼吸',ex:'<b>Breathe</b> in… and out.',sc:'冥想类视频口播',mis:'⚠️ breathe 是动词，breath 是名词：take a deep breath ✓。'}
+];
+var wordTab='今日';
+var wordTabs=[
+  {k:'今日',i:'📝',l:'今日'},
+  {k:'全部',i:'📚',l:'全部'}
+];
+function setWordTab(k){wordTab=k;renderWords()}
+function renderWords(){
+  renderNav('wordNav',wordTabs,wordTab,'setWordTab');
+  var doy=Math.floor((now-new Date(now.getFullYear(),0,0))/86400000);
+  var start=doy%words.length,picks=[];
+  for(var i=0;i<5;i++)picks.push(words[(start+i)%words.length]);
+  var h='';
+  if(wordTab==='今日'){
+    h+='<div class="word-hero"><div class="w">'+picks[0].w+'</div><div class="p">'+picks[0].p+'</div><div class="ex">'+picks[0].ex+'<br><span class="muted">📍 '+picks[0].sc+'</span></div><div class="ex" style="color:#C46A4A">'+picks[0].mis+'</div></div>';
+    for(var i=1;i<5;i++){
+      var w=picks[i];
+      h+='<div class="word-card"><div class="wh"><span class="w">'+w.w+'</span><span class="p">'+w.p+'</span></div><div class="row">📍 <b>'+w.sc+'</b></div><div class="row" style="color:#C46A4A">'+w.mis+'</div></div>';
+    }
+  }else{
+    h+='<div class="side-hint">全部 '+words.length+' 词 · 每天轮换5个</div>';
+    for(var i=0;i<words.length;i++){
+      var w=words[i];
+      h+='<div class="word-mini"><div class="wh"><span class="w">'+w.w+'</span><span class="p">'+w.p+'</span></div><div class="sc">📍 '+w.sc+'</div></div>';
+    }
+  }
+  $('wordMain').innerHTML=h;
+}
+
+/* ---------- 知识学习 ---------- */
+var studyData={
+  'AI 前沿':[
+    {t:'AI 语音转字幕工具',d:'剪映 / Whisper 免费档可自动出字幕，拍练习视频后期时间省一半。',s:5,
+     full:'<p><b>工具推荐：</b></p><p>1. <b>剪映</b>（免费）：导入视频→「智能字幕」→选中文→自动识别→微调错别字。精度约90%，3分钟出15分钟视频字幕。</p><p>2. <b>Whisper</b>（开源免费）：精度95%+，需要电脑安装。GitHub搜「whisper」下载。</p><p>3. <b>飞书妙记</b>：语音转文字，适合先录口播再转文字脚本。</p><p><b>对你的价值：</b>一个人拍视频最大的时间黑洞是后期，AI字幕能帮你省一半以上。原来40分钟的打字幕工作→3分钟+5分钟校对。</p><p><b>注意：</b>AI生成的字幕一定要人工校对一遍，专业术语和口音会导致识别错误。</p>'},
+    {t:'微信小程序 AI 客服',d:'课包上线后可用云开发 AI 客服自动答疑，一个人顶一个团队。',s:5,
+     full:'<p><b>是什么：</b>微信云开发内置 AI 能力，可以在小程序里加一个智能客服，自动回答用户常见问题。</p><p><b>能做什么：</b></p><p>· 自动回答「练习多久有效果？」「适合什么人？」「怎么购买？」<br>· 7×24小时在线，你睡觉它也在接客<br>· 回答不了的问题转人工通知你</p><p><b>成本：</b>云开发基础版免费，AI调用按量付费（初期月费几块钱）</p><p><b>怎么接：</b>微信云开发→AI能力→配置问答对→小程序接入组件。不需要写复杂代码，配置即可。</p><p><b>对你的价值★★★★★：</b>一个人卖课，客服是最大瓶颈。AI客服能帮你挡掉80%重复问题。</p>'},
+    {t:'AI 生成练习配乐',d:'Suno 等工具免费额度可生成慢节奏纯音乐，冥想类视频 BGM 不用愁版权。',s:4,
+     full:'<p><b>工具：</b></p><p>1. <b>Suno AI</b>：每天免费额度，输入「慢节奏冥想纯音乐 钢琴 自然声」即可生成。版权可商用（付费版）。</p><p>2. <b>剪映自带音乐库</b>：免费可商用，搜「冥想」「放松」「治愈」。</p><p>3. <b>YouTube Audio Library</b>：免费可商用，大量纯音乐。</p><p><b>对你的价值：</b>冥想/放松类视频最需要BGM，用AI生成可以完全定制节奏和氛围，不用担心版权问题。生成的音乐质量已经接近人工制作。</p>'},
+    {t:'AI 视频剪辑助手',d:'自动剪口播停顿、去废话词，适合一个人拍摄一条过。',s:4,
+     full:'<p><b>工具：</b></p><p>1. <b>剪映「智能剪辑」</b>：自动识别口播中的停顿、语气词（嗯、啊、那个），一键删除。30分钟素材→10分钟成品。</p><p>2. <b>Descript</b>（英文）：编辑文字=编辑视频，删文字等于删画面。</p><p>3. <b>CapCut 桌面版</b>：自动节拍对齐，BGM和画面自动同步。</p><p><b>实操建议：</b>拍的时候一条过不要停，后期让AI帮你剪掉停顿和废话。一个人也能做出专业剪辑效果。</p><p><b>对你的价值：</b>你拍练习视频不需要复杂剪辑，AI去废词+加字幕+配BGM三步搞定，每条视频后期15分钟以内。</p>'}
+  ],
+  '康复研究':[
+    {t:'步态再学习：任务导向 > 单一重复',d:'权威方向：带着目的走路比机械重复抬腿更有效——正好是你练「正常生活感」的思路。',s:5,
+     full:'<p><b>核心观点：</b>带着目的走路（去拿杯子、跨过线、走向门口）比机械重复抬腿更有效。大脑通过「任务」重新学习运动模式，而不是通过「重复」。</p><p><b>权威来源：</b>国际物理医学与康复学会（ISPRM）指南、Cochrane系统综述。</p><p><b>这对你意味着什么：</b></p><p>· 你练「正常生活感」的思路完全正确——去拿快递、去厨房倒水、去阳台浇花，这些都是任务导向训练<br>· 不要只练「抬腿100次」，而是练「走到客厅拿个东西再走回来」<br>· 每天的生活本身就是训练，不需要额外抽出时间做机械重复</p><p><b>实操：</b>给自己设小任务——「今天走到门口取快递」「走到厨房倒杯水」，完成就是训练。比在原地抬腿有效得多。</p>'},
+    {t:'平衡训练：短时高频 > 偶尔突击',d:'每天 5 分钟单脚站，优于一周一次 30 分钟。碎片化练习是你的优势。',s:5,
+     full:'<p><b>核心观点：</b>神经系统学习平衡需要「频繁提醒」而不是「一次性大量刺激」。每天5分钟×7天 = 35分钟，效果远优于一周一次30分钟。</p><p><b>权威来源：</b>Journal of NeuroPhysiology、循证医学综述。</p><p><b>这对你意味着什么：</b></p><p>· 碎片化练习是你的优势——刷牙时单脚站、等水开时踮脚、看电视时坐到站练习<br>· 不需要每天专门安排30分钟练平衡，分散在生活里更有效<br>· 状态好的时候多做几个，状态差的时候少做几个，关键是「每天都做一点」</p><p><b>实操：</b>每天3个场景——晨起刷牙单脚站30秒×2、午间等水开踮脚10次、晚间看电视坐到站5次。总共不到5分钟。</p>'},
+    {t:'睡眠与身体整合',d:'睡前放松时段身体整合白天的练习成果——你的睡前冥想系列正好踩在这个点上。',s:4,
+     full:'<p><b>核心观点：</b>睡眠不是「关机」，而是「整理」。大脑在深睡眠阶段会重播白天的运动模式，强化神经连接。睡得好=练习效果好。</p><p><b>权威来源：</b>Nature Neuroscience、Sleep Medicine Reviews。</p><p><b>这对你意味着什么：</b></p><p>· 你的睡前冥想系列不只是内容选题，它本身就是身体整合的训练手段<br>· 白天练的动作，睡前放松+好睡眠=大脑帮你「存档」<br>· 睡眠质量直接影响第二天的练习状态——所以「休息也是训练」不是鸡汤，是科学</p><p><b>实操：</b>睡前10分钟身体扫描+深呼吸，不是额外的任务，而是帮身体整理当天的练习成果。你的受众做这个也有同样好处。</p>'},
+    {t:'疲劳管理是隐形训练',d:'状态差≠退步。研究支持「疲劳时降低强度」而不是硬扛，避免代偿动作固化。',s:4,
+     full:'<p><b>核心观点：</b>疲劳时身体会自动用「代偿动作」（不正确的姿势）来完成任务。如果硬扛，大脑会记住错误的运动模式，反而固化坏习惯。疲劳时降低强度≠偷懒，而是防止学错。</p><p><b>权威来源：</b>Journal of Motor Behavior、临床运动学习理论。</p><p><b>这对你意味着什么：</b></p><p>· 状态差的日子不是「退步」，是身体在说「今天别学新东西，复习就好」<br>· 疲劳时做轻量复习（已经熟练的动作），不做新挑战<br>· 这也是内容素材——「状态不好的一天，我允许自己休息」这条选题就是讲这个道理</p><p><b>30%低谷+70%进步的内容比例</b>，既真实又有科学依据，不是卖惨。</p>'}
+  ],
+  '商业洞察':[
+    {t:'内容变现15种路径全图',d:'从0粉到IP全阶段：流量分成→广告接单→知识付费→直播带货→私域社群→IP衍生。',s:5,
+     full:'<p><b>零粉起步：</b></p><p>· 抖音中视频计划：1-30分钟视频，千次播放1.2-8元<br>· 视频号流量分成：社交裂变加权，知识类收益超抖音<br>· 需保持内容垂直，原创认证可叠加30%流量倾斜</p><p><b>1万粉接广告：</b></p><p>· 抖音星图：达人分成45%，美妆3C类单条=粉丝量×1.5元<br>· 小红书蒲公英：家居母婴转化率8.3%，搜索流量占38%<br>· 视频号互选广告：客资获取成本比抖音低42%</p><p><b>变现阶段：</b></p><p>· 知识付费：课包299元×400份=12万（你的方向）<br>· 付费社群：199元/年×50人=万元/月<br>· 直播带货：选品秘诀=动销率≥75%+复购率≥25%<br>· IP衍生：自创品牌、线下见面会出场费5万起</p><p><b>收益段位：</b>日更3条月入3000→建社群月入1万→多平台矩阵月入3万→直播+课程+IP月入10万+</p>'},
+    {t:'营销话术：发售不提"卖"字',d:'不说"课程/课包/购买/价格"，说"练习记录/分享/整理好了"——合规又自然。',s:5,
+     full:'<p><b>合规话术模板：</b></p><p>· ❌ "购买我的课程" → ✅ "我把练习整理好了，有兴趣看看"<br>· ❌ "课包价格99元" → ✅ "练习记录放在小程序里了"<br>· ❌ "报名/上课" → ✅ "一起练习/跟着做"<br>· ❌ "治疗效果" → ✅ "我的身体变化记录"</p><p><b>软发售6阶段：</b></p><p>第1-2周：纯内容积累，不提课包<br>第3-4周：偶尔暗示"在整理"<br>第5-6周：展示幕后花絮（录课过程）<br>第7周：明确预告"快好了"<br>第8周：软发售，"放在小程序里了，有兴趣看看"<br>第9周起：每2周提1次，不硬推</p><p><b>关键原则：</b>全程不主动推销，让内容自然引流。用户问"有课吗"才说"有整理好的练习记录"。</p>'},
+    {t:'私域运营：企微+视频号=变现黄金组合',d:'视频号引流→企微沉淀→社群运营→课包转化，一个人也能做。',s:4,
+     full:'<p><b>私域链路：</b></p><p>1. 视频号内容吸引关注（公域引流）<br>2. 主页引导加企业微信（私域沉淀）<br>3. 企微社群日常运营（信任建立）<br>4. 社群内软推课包（转化）</p><p><b>社群运营节奏：</b></p><p>· 每天发1条练习打卡（带头做）<br>· 每周发1条进步对比（激发共鸣）<br>· 每两周提1次课包（不硬推）<br>· 月底做1次答疑直播（增强信任）</p><p><b>工具：</b>企业微信免费、社群管理用企微自带功能即可</p><p><b>对你的价值：</b>视频号是主阵地，直接跳转企微最顺。1万个公域粉丝→500个私域用户→50个付费用户=4999元（99元客单价）。不需要海量粉丝，精准就行。</p>'},
+    {t:'普通人能抓的商业机会（2025）',d:'AI工具降低门槛、知识普惠需求爆发、中老年健康市场增量——三条路都能走。',s:4,
+     full:'<p><b>机会1：AI工具红利</b></p><p>文生视频、AI配音、智能剪辑让一个人=一个团队。会用AI工具的创作者效率是传统创作者的3-5倍。<br><b>你怎么抓：</b>剪映AI字幕+AI配音+AI剪辑，每条视频后期15分钟以内</p><p><b>机会2：知识普惠</b></p><p>"把专业知识说人话"是2025最吃香的内容类型。法律避坑、健康科普、效率工具类完播率+37%。<br><b>你怎么抓：</b>把练习经验翻译成"我的身体记录"——知识分享类有流量扶持</p><p><b>机会3：中老年健康市场</b></p><p>视频号60%+中老年用户，养生/冥想/睡前类完播率比平均高35%。客单价不低、复购率高、投诉率低。<br><b>你怎么抓：</b>晨起/睡前冥想系列+中老年友好封面+养生标签</p><p><b>机会4：虚拟主播/24h直播</b></p><p>AI虚拟主播完播率+15%，推荐量+300%。适合知识科普类不间断直播。<br><b>你怎么抓：</b>后期可以考虑，现阶段先做好内容积累</p>'}
+  ],
+  '抖音热点':[
+    {t:'2025高完播率剪辑7大技巧',d:'前3秒决定80%流量，分段钩子+变速狙击+伪闭环+听觉锚点。',s:5,
+     full:'<p><b>① 分段钩子结构</b></p><p>0-3秒强冲突开场→10秒抛利益点→30秒制造悬念<br>例："这瓶30块的精华，毁了我价值2万的脸"（完播率+121%）</p><p><b>② 时间错位剪辑</b></p><p>15秒视频按12秒节奏剪辑（加速1.2倍+删过渡句）<br>关键信息重复2次：先说结论→展开→再强化结论</p><p><b>③ 进度条刺激点</b></p><p>在1/4、1/2、3/4处设视觉标记（文字/音效）<br>例：美食教程在中点弹出"终极秘诀来了！"</p><p><b>④ 伪闭环结构</b></p><p>前20秒完成主体→黑屏1秒→弹出彩蛋（"别走！附赠隐藏技巧"）<br>完播率+15%</p><p><b>⑤ 听觉锚点</b></p><p>每7秒加提示音（"叮"），BGM突然停制造悬念<br>声音比画面更能留住用户</p><p><b>⑥ 变速狙击法</b></p><p>0-3秒：3倍速快剪高光→4-12秒：1倍速核心→13秒：0.5倍慢放反转→14-28秒：1.5倍收尾→最后2秒：冻结帧+福利弹窗</p><p><b>⑦ 互动诱导</b></p><p>15秒处抛AB选择题，评论量+300%<br>故意保留10%内容引发讨论（"具体配方放评论区"）</p>'},
+    {t:'剪映核爆功能速查',d:'AI文案+智能抠图+关键帧+AI配音+自动踩点，小白3天速成。',s:5,
+     full:'<p><b>AI文案：</b>输入关键词自动生成脚本。适合卡壳时找灵感。</p><p><b>智能字幕：</b>导入视频→「智能字幕」→选中文→自动识别→微调错别字。精度约90%，3分钟出15分钟视频字幕。</p><p><b>智能抠图：</b>3秒实现虚拟背景替换。拍练习视频不需要专业绿幕，纯色墙面就行。</p><p><b>关键帧动画：</b>开头打关键帧→结尾放大画面→自动生成推镜效果。还可以做色调渐变（正常→黑白→恢复）。</p><p><b>AI配音：</b>完播率比真人配音高18%。适合口播类，选温柔女声/治愈系男声。</p><p><b>自动踩点：</b>选BGM→「节拍检测」→自动对齐鼓点。精准卡点可提升点赞率58%。</p><p><b>曲线变速：</b>「变速」→「自定义」→绘制S型曲线制造张力。关键动作0.5x，过渡场景2x。</p><p><b>蒙版运用：</b>导入两段视频→上层加线性蒙版→旋转45度→调羽化值=分屏效果。画中画选「滤色」混合模式去黑底。</p>'},
+    {t:'3秒黄金法则+爆款脚本公式',d:'悬念/利益/视觉冲击三选一开头，认知反差+情感共鸣+实用清单三件套。',s:5,
+     full:'<p><b>3秒钩子三种方式：</b></p><p>1. <b>悬念型：</b>"做自媒体1年，我踩过最大的坑居然是……"<br>2. <b>利益型：</b>"这个方法让我1个月涨粉10万"<br>3. <b>视觉冲击：</b>高速镜头/放大特写/高饱和度色调</p><p><b>爆款脚本5大公式：</b></p><p><b>公式1：3秒暴击开场</b><br>把最戏剧性片段剪到开头（油爆瞬间/摔倒/成功一刻），倒叙结构抛问题</p><p><b>公式2：情绪价值叠加</b><br>认知反差+情感共鸣+实用清单<br>例："月薪3000如何穿出大牌感"获82万点赞</p><p><b>公式3：互动诱导结构</b><br>15秒处抛选择题→故意留10%内容→设参与挑战<br>评论量+300%</p><p><b>公式4：场景化叙事</b><br>痛点场景还原→解决方案→Before/After对比<br>转化率+27%</p><p><b>公式5：伪闭环</b><br>前20秒完成→黑屏1秒→彩蛋弹出<br>复播率+37%</p><p><b>万能公式：</b>3秒Hook + 15秒Value + 5秒CTA × 情感共鸣 = 爆款概率最大化</p>'},
+    {t:'低成本装备出电影级质感',d:'200元装备清单+手机参数生死线+调色万能公式。',s:4,
+     full:'<p><b>穷鬼装备清单（总300元以内）：</b></p><p>· 环形补光灯 70元 → 解决80%画质问题<br>· RGB背景灯 230元 → 氛围感拉满<br>· 无线领夹麦 百元内 → 清晰度比手机麦高5倍<br>· 手机支架 19.9元 + 剪映防抖 → 替代万元稳定器</p><p><b>手机参数生死线：</b></p><p>· 分辨率：4K 60帧→压缩输出1080P（锐度+30%）<br>· 电影模式：夜间必开<br>· 白平衡：手动锁定4000-5500K<br>· 发布：勾选"高清发布"+关闭自动美颜</p><p><b>调色万能公式：</b></p><p>亮度+5 | 对比度+10 | 饱和度+8 | 锐化+15 | 色温-3</p><p><b>风格化调色：</b></p><p>· 清新风：青柠滤镜20%+色温-5<br>· 复古风：卡梅尔滤镜30%+色调+10<br>· 电影感：降亮度+暗角效果</p><p><b>字幕规范：</b></p><p>位置底部1/5区域 | 思源黑体28-32px | 白字黑描边3px | 重点内容红色高亮</p>'}
+  ]
+};
+var studyTab='AI 前沿';
+var studyTabs=[
+  {k:'AI 前沿',i:'🤖',l:'AI前沿'},
+  {k:'康复研究',i:'🧘',l:'康复研究'},
+  {k:'商业洞察',i:'💡',l:'商业洞察'},
+  {k:'抖音热点',i:'🔥',l:'抖音热点'}
+];
+function setStudyTab(k){studyTab=k;renderStudy()}
+function renderStudy(){
+  renderNav('studyNav',studyTabs,studyTab,'setStudyTab');
+  var list=studyData[studyTab];
+  var h='<div class="side-hint">'+studyTab+' · '+list.length+' 篇</div>';
+  for(var j=0;j<list.length;j++){
+    var st='';for(var s=0;s<5;s++)st+=s<list[j].s?'★':'☆';
+    h+='<div class="study-card" onclick="toggleStudy('+j+')"><div class="st">'+list[j].t+'</div><div class="sd">'+list[j].d+'</div><div class="sfull" id="sf-'+j+'">'+list[j].full+'</div><div class="stoggle" id="st-'+j+'">点击展开详情 ▼</div><div class="stars" style="margin-top:8px">对你的价值 '+st+'</div></div>';
+  }
+  $('studyMain').innerHTML=h;
+}
+function toggleStudy(j){
+  var f=$('sf-'+j),t=$('st-'+j);
+  if(f.classList.contains('show')){
+    f.classList.remove('show');t.textContent='点击展开详情 ▼';
+  }else{
+    f.classList.add('show');t.textContent='收起 ▲';
+  }
+}
+
+/* ---------- AI 对话助手 ---------- */
+var chatHistory=[];
+var chatKB=[
+  {keys:['今天','做什么','计划','任务'],a:'今天的计划已经按星期自动生成了。点底部「计划」页查看。一三五拍视频号（晚8点发）、二四小红书图文、周六写脚本、周日20:00直播。每天还有身体练习15分钟+5词+数据复盘。'},
+  {keys:['报税','税','申报','零申报'],a:'季度报税日期：1/15、4/15、7/15、10/15。查账征收，每季零申报，线上5分钟。操作：电子税务局→我要办税→税费申报→增值税收入填0→个税利润填0→提交。申报前1个月首页自动提醒。'},
+  {keys:['标签','话题','hashtag'],a:'绝对禁用标签：神经损伤、脊髓损伤、脑脊髓炎、康复训练、治疗、足内翻、足下垂、肌张力。曾因此被封30天！安全标签：#走路不稳 #身体在变好 #慢慢来 #我的身体记录 #日常练习。冥想类加：#养生 #冥想 #静心 #睡前冥想。'},
+  {keys:['禁用词','不能说','口播','文案'],a:'口播禁用：治疗/修复/治愈/疗法/调理内分泌/修复受损细胞/中医调理/穴位治疗/经络疏通。安全替代：「我的日常练习」「身体在变好」「我的方式」。课包不说"课程/课包/购买/价格"，说"练习记录/分享/整理好了"。广告法第十七条，处罚10万-100万。'},
+  {keys:['频率','发几条','发布','节奏'],a:'视频号每周3条（一/三/五晚8点）· 小红书每周2-3篇 · 抖音同步 · 直播每周1场周日20:00。稳定>高频，算法看持续性。'},
+  {keys:['课包','课程','卖','定价','命名'],a:'课包命名：身体觉醒练习记录/慢节奏身体课程。不说"课程/课包/购买/价格"，说"练习记录/分享/整理好了"。定价99-199元初期试水。单条15-25分钟，第一批8-12条。发售节奏：第1-2周纯内容→第3-4周暗示→第5-6周幕后→第7周预热→第8周软发售。'},
+  {keys:['预算','花了','记账','支出','收入','退款'],a:'记账页可以记支出和收入。预算点余额卡上的「预算 ¥XX」可以自己改。收入/退款点「收入」按钮记。本月收入、支出、净额自动汇总。设备采购记得选「设备·可抵税」分类，留好发票。'},
+  {keys:['单词','英语','词','学英语'],a:'每日5词页，每天轮换5个生活场景词，带使用场景和笑场警告。比如balance（平衡）、steady（稳的）、pace（节奏）都跟你的练习直接相关。'},
+  {keys:['AI','工具','人工智能','效率'],a:'知识学习页→AI前沿，每两周更新。目前有：AI语音转字幕（剪映/Whisper）、AI客服（小程序云开发）、AI配乐（Suno）、AI剪辑（剪映智能剪辑）。点击卡片可展开完整使用指南。'},
+  {keys:['康复','研究','权威','步态','平衡'],a:'知识学习页→康复研究。四个权威方向：①步态再学习（任务导向>重复）②平衡训练（短时高频>突击）③睡眠整合（睡前放松帮身体存档）④疲劳管理（状态差就降低强度，别硬扛）。点击卡片展开详情。'},
+  {keys:['抖音','被封','封禁','实名'],a:'先确认是账号封禁还是人脸封禁。账号封禁→换号注册；人脸封禁→用男朋友身份证注册新号。确认后再投入精力。视频号是主阵地，抖音是第二阵地同步发。'},
+  {keys:['小程序','上线','备案','资质'],a:'小程序卖课：个体户可做知识付费/兴趣课。需执照正常存续+ICP备案（免费）+小程序认证300元/年。不能做K12学科培训。经营者/法人/管理员必须同一人。首年总成本约540-800元。'},
+  {keys:['歇业','停业','不经营'],a:'不能歇业！歇业=非正常存续→ICP备案被拒→小程序无法上线。无收入就零申报（收入填0），5分钟搞定。零申报是合法的。'},
+  {keys:['选题','灵感','拍什么','内容'],a:'选题灵感页有15个安全选题池，5个分类（全部/视频号/小红书/抖音/Vlog），点「换一批」轮换。康复Vlog类选题涨粉最强：第300天记录、一年前vs现在对比、深夜练走心声。'},
+  {keys:['配色','颜色','珊瑚','绿色'],a:'余额卡用珊瑚色#D85A30因为绿色在中国股市=下跌，不吉利。珊瑚橙代表活力和收入动力，色彩心理学更积极正向。主色sage-teal#6BA8A0保留。'},
+  {keys:['冥想','养生','中老年','睡前','晨起'],a:'冥想/养生内容适合中老年群体。出「晨起版」和「睡前版」两个系列。封面用「养生」「十分钟」等中老年敏感词。标签用#养生 #冥想 #静心 #睡前冥想。通用引导语：「不管你现在身体什么状态」——避免健康人群觉得是给病人做的。'},
+  {keys:['成本','发票','抵税','设备'],a:'设备采购（脚架、灯光、麦克风）可抵税，但必须有发票。个人代开发票每次1000元以下免增值税。给用户发工资需真实在岗+合理薪资+完整凭证。经营者本人工资不能税前扣除。'},
+  {keys:['版权','著作权','保护'],a:'课程完成创作自动获得著作权，登记增强证明力。消费者权益：在线课程属数字化商品，购买时确认不宜退货则不适用七天无理由；未确认则可退。退费规则必须公示+购买时确认。'},
+  {keys:['商业','营销','销售','变现','赚钱','赚钱'],a:'知识学习页→商业洞察。4个方向：①内容变现15种路径（流量分成→广告→知识付费→直播→私域→IP）②营销话术（不说"课程/购买"，说"练习记录/分享"）③私域运营（视频号→企微→社群→课包转化）④普通人商业机会（AI工具+知识普惠+中老年健康市场）。点击卡片展开完整内容。'},
+  {keys:['抖音热点','热点','热门','趋势','流量','爆款'],a:'知识学习页→抖音热点。4个方向：①高完播率7大技巧（分段钩子+变速狙击+伪闭环+听觉锚点）②剪映核爆功能（AI字幕+智能抠图+关键帧+AI配音+自动踩点）③爆款脚本公式（3秒暴击+情绪叠加+互动诱导+场景叙事+伪闭环）④低成本装备出电影级质感（300元清单+调色公式）。点击卡片展开详情。'},
+  {keys:['脚本','大纲','怎么拍','怎么剪','剪辑','剪映'],a:'选题灵感页每个选题卡片都可以点击展开，里面有完整的脚本大纲（0-3秒拍什么、中间拍什么、结尾拍什么）和剪映剪辑方法（变速/BGM/转场/调色/字幕/关键帧）。15个选题每个都有。比如"走路前后对比短片"的分屏蒙版做法、"深夜练走"的暗调沉浸感拍法都有。'}
+];
+var quickQs=['今天做什么？','什么标签不能用？','怎么变现赚钱？','选题怎么拍怎么剪？','报税怎么操作？','本月花了多少？'];
+function openChat(){
+  $('cMask').classList.add('show');
+  if(!chatHistory.length){
+    chatHistory.push({me:false,text:'你好瑞娜！我是你的工作台助手。我能回答关于计划、规则、记账、选题、课包、税务等问题。直接问就行，或者点下面的快捷问题。'});
+    renderChat();renderQuickQs();
+  }
+  setTimeout(function(){$('cIn').focus()},200);
+}
+function closeChat(){$('cMask').classList.remove('show')}
+function renderChat(){
+  var h='';
+  for(var i=0;i<chatHistory.length;i++){
+    h+='<div class="c-msg '+(chatHistory[i].me?'me':'bot')+'"><div class="c-bubble">'+chatHistory[i].text+'</div></div>';
+  }
+  $('cMsgs').innerHTML=h;
+  $('cMsgs').scrollTop=$('cMsgs').scrollHeight;
+}
+function renderQuickQs(){
+  var h='';
+  for(var i=0;i<quickQs.length;i++)h+='<button onclick="quickAsk('+i+')">'+quickQs[i]+'</button>';
+  $('cQuick').innerHTML=h;
+}
+function quickAsk(i){$('cIn').value=quickQs[i];sendChat()}
+function sendChat(){
+  var q=$('cIn').value.trim();
+  if(!q)return;
+  chatHistory.push({me:true,text:q});
+  $('cIn').value='';renderChat();
+  var ql=q.toLowerCase(),best=null,bestScore=0;
+  for(var i=0;i<chatKB.length;i++){
+    var score=0;
+    for(var j=0;j<chatKB[i].keys.length;j++){if(ql.indexOf(chatKB[i].keys[j])>=0)score++}
+    if(score>bestScore){bestScore=score;best=chatKB[i]}
+  }
+  setTimeout(function(){
+    var ans;
+    if(best&&bestScore>0){ans=best.a}
+    else{ans='这个问题我暂时没有现成答案。建议在WorkBuddy对话窗口里问我（就是你现在跟我聊天的这个App），那边的AI带着你的完整记忆，能回答更复杂的问题。你也可以试试换个问法，比如「标签」「报税」「选题」。'}
+    chatHistory.push({me:false,text:ans});renderChat();
+    if(!best||bestScore===0){
+      setTimeout(function(){chatHistory.push({me:false,text:'💡 复杂问题请回WorkBuddy对话窗口提问，那边的AI有你的完整背景记忆。'});renderChat()},800);
+    }
+  },400);
+}
+
+function backupData(){
+  var d={};
+  for(var i=0;i<localStorage.length;i++){
+    var k=localStorage.key(i);
+    if(k&&k.indexOf('wb_')===0){try{d[k]=JSON.parse(localStorage.getItem(k))}catch(e){}}
+  }
+  var blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='瑞娜工作台备份_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+}
+
+/* ---------- 日期刷新 ---------- */
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='visible'){
+    var nd=new Date();
+    if(nd.getDate()!==now.getDate()||nd.getMonth()!==now.getMonth()){
+      now=nd;
+      key='wb_'+now.getFullYear()+'-'+(now.getMonth()+1)+'-'+now.getDate();
+      renderHome();renderPlan();renderWords();
+    }
+  }
+});
+
+/* ---------- 初始化 ---------- */
+renderHome();renderPlan();renderTopics();renderRules();renderMoney();renderWords();renderStudy();
+</script>
+</body>
+</html>
