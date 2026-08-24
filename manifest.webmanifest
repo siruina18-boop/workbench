@@ -1,0 +1,15 @@
+{
+  "name": "瑞娜工作台",
+  "short_name": "瑞娜工作台",
+  "description": "瑞娜的移动工作台：计划、选题、记账、学习与 AI 助手",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#BEB0CC",
+  "theme_color": "#BEB0CC",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-1024.png", "sizes": "1024x1024", "type": "image/png" }
+  ]
+}
