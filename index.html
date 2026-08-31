@@ -323,6 +323,33 @@
     .push-row:active{background:#FAFAF9;}
     .sync-cell{cursor:pointer;}
     .sync-cell.done{cursor:default;}
+    /* ===== 每日单词模块 ===== */
+    .word-card{background:var(--card);border-radius:14px;padding:14px 14px 12px;margin-bottom:10px;box-shadow:var(--shadow);}
+    .word-head{display:flex;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:6px;}
+    .word-w{font-size:22px;font-weight:700;color:var(--ink);}
+    .word-ph{font-size:14px;color:var(--teal-dk);font-style:italic;}
+    .word-pos{font-size:12px;color:#fff;background:var(--teal);padding:1px 8px;border-radius:8px;font-weight:600;}
+    .word-tag{font-size:11px;color:var(--coral);background:var(--coral-lt);padding:2px 8px;border-radius:8px;font-weight:600;}
+    .word-cn{font-size:15px;color:var(--ink);margin-bottom:8px;line-height:1.5;}
+    .word-ex{font-size:14px;color:#5a5a5a;font-style:italic;margin-bottom:3px;line-height:1.55;}
+    .word-ex-cn{font-size:13px;color:#888;margin-bottom:8px;line-height:1.5;}
+    .word-pitfall{font-size:13px;color:var(--coral);background:var(--coral-lt);border-radius:10px;padding:8px 11px;line-height:1.55;}
+    .word-pitfall b{color:var(--coral);}
+    .review-card{background:var(--teal-lt);border:2px solid var(--teal);border-radius:14px;padding:14px;margin-bottom:10px;}
+    .review-badge{font-size:11px;color:#fff;background:var(--teal);padding:2px 9px;border-radius:8px;font-weight:700;display:inline-block;margin-bottom:8px;}
+    .review-q{font-size:13px;color:var(--teal-dk);margin-bottom:4px;font-weight:600;}
+    .review-hint{font-size:16px;color:var(--ink);font-weight:700;margin-bottom:6px;}
+    .review-ex{font-size:13px;color:#5a5a5a;font-style:italic;margin-bottom:10px;line-height:1.5;}
+    .review-ans{font-size:20px;font-weight:700;color:var(--coral);margin-bottom:4px;}
+    .review-ans .ph{font-size:14px;color:var(--teal-dk);font-style:italic;font-weight:400;margin-left:6px;}
+    .review-act{display:flex;gap:8px;margin-top:10px;}
+    .review-act .btn{flex:1;min-height:44px;font-size:14px;}
+    .word-stat{display:flex;gap:8px;margin-top:6px;}
+    .word-stat .si{flex:1;background:var(--card);border-radius:12px;padding:11px 6px;text-align:center;box-shadow:var(--shadow);}
+    .word-stat .n{font-size:20px;font-weight:700;color:var(--teal-dk);line-height:1.2;}
+    .word-stat .l{font-size:11px;color:#999;}
+    .word-done-tap{font-size:12px;color:var(--teal-dk);text-align:center;padding:14px;background:var(--teal-lt);border-radius:12px;}
+    @media(max-width:768px){.word-w{font-size:20px;}}
   </style>
 </head>
 <body>
@@ -366,7 +393,8 @@
         </div>
         <!-- 学习侧栏 -->
         <div class="side-group hidden" data-for-page="study">
-          <button class="nav-btn active" data-page="study" data-tab="ai" data-on="settab"><span class="ico">🤖</span>AI</button>
+          <button class="nav-btn active" data-page="study" data-tab="word" data-on="settab"><span class="ico">📖</span>单词</button>
+          <button class="nav-btn" data-page="study" data-tab="ai" data-on="settab"><span class="ico">🤖</span>AI</button>
           <button class="nav-btn" data-page="study" data-tab="business" data-on="settab"><span class="ico">💼</span>商业</button>
           <button class="nav-btn" data-page="study" data-tab="hot" data-on="settab"><span class="ico">🔥</span>热点</button>
           <button class="nav-btn" data-page="study" data-tab="body" data-on="settab"><span class="ico">🧘</span>科普</button>
@@ -1153,6 +1181,20 @@
           <div class="tabview" data-tab="hot" data-for-page="study">
             <div class="card card-tight"><div class="card-title">🔥 平台与内容套路</div><div class="card-sub">把内容当产品，把完播当第一指标</div></div>
 
+            <div class="card card-tight" id="hotTodayCard">
+              <div class="card-title">🔥 今日热点 08月31日</div>
+              <div class="card-sub">每天 8:00 自动更新 · 平台动态与选题风向</div>
+              <div id="hotToday">
+                <ul style="margin:8px 0 0;padding-left:18px;line-height:1.9;font-size:14px;color:#444;">
+                  <li><strong>视频号切换「7 天长效赛马」：</strong>考核周期从 24 小时延长到 7 天，收藏率 &gt; 转发 &gt; 评论 &gt; 点赞，完播率不再是唯一核心。<span style="color:var(--teal-dk);">→ 结尾加一句「收藏起来慢慢练」，把动作要点做成清单式内容，撬动收藏权重。</span></li>
+                  <li><strong>社交推荐仍是第一引擎（约 55%）：</strong>发布后 3 小时是黄金启动期，先靠社交数据破初始流量池。<span style="color:var(--teal-dk);">→ 一三五 20:00 发布后，立刻转发朋友圈，请亲友先点赞评论。</span></li>
+                  <li><strong>垂直度养标签：</strong>算法要靠连续 20 条以上同领域内容才能稳定识别人群，跨领域乱发会打乱标签。<span style="color:var(--teal-dk);">→ 别穿插生活流水账，聚焦「慢节奏身体练习」一个标签打透。</span></li>
+                  <li><strong>搜索流量权重上升：</strong>视频号、抖音都在加大搜索入口，标题带关键词有长期免费流量。<span style="color:var(--teal-dk);">→ 标题多带「晨起十分钟」「睡前拉伸」「不用器械」这类搜索词。</span></li>
+                  <li><strong>同城加权红利：</strong>视频号发布时带地理位置，3 公里内用户优先曝光。<span style="color:var(--teal-dk);">→ 发布时带「大理」定位，蹭本地中老年养生人群。</span></li>
+                </ul>
+              </div>
+            </div>
+
             <div class="details-card">
               <details>
                 <summary><span>🔥</span>视频号高完播率套路</summary>
@@ -1263,6 +1305,12 @@
             </div>
 
           </div>
+          <div class="tabview" data-tab="word" data-for-page="study">
+            <div class="card card-tight"><div class="card-title">📖 每日 3 词</div><div class="card-sub">贴合你的内容创作 / 经营 / 身体练习场景，学完下周自动复习</div></div>
+            <div id="wordToday"></div>
+            <div id="wordReview"></div>
+            <div id="wordStats" class="word-stat"></div>
+          </div>
         </section>
       </main>
     </div>
@@ -1283,7 +1331,7 @@
     <!-- 记一笔弹层 -->
     <div class="sheet" id="entrySheet">
       <div class="sheet-hd">
-        <div class="sheet-title">记一笔支出</div>
+        <div class="sheet-title" id="sheetOutTitle">记一笔支出</div>
         <button class="sheet-close" data-on="closeSheets">✕</button>
       </div>
       <div class="sheet-bd">
@@ -1317,7 +1365,7 @@
     <!-- 收入弹层 -->
     <div class="sheet" id="incomeSheet">
       <div class="sheet-hd">
-        <div class="sheet-title">记一笔收入</div>
+        <div class="sheet-title" id="sheetInTitle">记一笔收入</div>
         <button class="sheet-close" data-on="closeSheets">✕</button>
       </div>
       <div class="sheet-bd">
@@ -1583,13 +1631,19 @@
       amt.className = 'entry-amt ' + (isOut ? 'out' : 'in');
       amt.textContent = (isOut ? '-' : '+') + '¥' + (+e.amt).toFixed(2);
 
+      var edit = document.createElement('button');
+      edit.className = 'btn btn-sm btn-teal';
+      edit.setAttribute('data-on', 'editEntry');
+      edit.setAttribute('data-id', e.id);
+      edit.textContent = '改';
+
       var del = document.createElement('button');
       del.className = 'btn btn-sm btn-gray';
       del.setAttribute('data-on', 'delEntry');
       del.setAttribute('data-id', e.id);
       del.textContent = '删';
 
-      item.appendChild(info); item.appendChild(amt); item.appendChild(del);
+      item.appendChild(info); item.appendChild(amt); item.appendChild(edit); item.appendChild(del);
       container.appendChild(item);
     });
   }
@@ -1615,6 +1669,48 @@
     saveEntries(entries);
   }
 
+  var editingId = null;
+
+  function updateEntry(id, amt, cat, note, src){
+    var entries = getEntries();
+    for(var i = 0; i < entries.length; i++){
+      if(entries[i].id === id){
+        entries[i].amt = +amt;
+        if(entries[i].type === 'out'){ entries[i].cat = cat || entries[i].cat; entries[i].note = note || ''; }
+        else { entries[i].src = src || entries[i].src; entries[i].note = note || ''; }
+        break;
+      }
+    }
+    saveEntries(entries);
+  }
+
+  function startEditEntry(id){
+    var e = null;
+    var entries = getEntries();
+    for(var i = 0; i < entries.length; i++){ if(entries[i].id === id){ e = entries[i]; break; } }
+    if(!e) return;
+    editingId = id;
+    if(e.type === 'out'){
+      $('sheetOutTitle').textContent = '编辑这笔支出';
+      $('entryAmt').value = e.amt;
+      $('entryNote').value = e.note || '';
+      var catSel = $('entryCat');
+      var hasCat = false;
+      for(var j = 0; j < catSel.options.length; j++){ if(catSel.options[j].value === e.cat){ hasCat = true; break; } }
+      catSel.value = hasCat ? e.cat : '其他';
+      openSheet('entrySheet'); $('entryAmt').focus();
+    }else{
+      $('sheetInTitle').textContent = '编辑这笔收入';
+      $('incomeAmt').value = e.amt;
+      $('incomeNote').value = e.note || '';
+      var srcSel = $('incomeSrc');
+      var hasSrc = false;
+      for(var k = 0; k < srcSel.options.length; k++){ if(srcSel.options[k].value === e.src){ hasSrc = true; break; } }
+      srcSel.value = hasSrc ? e.src : '其他';
+      openSheet('incomeSheet'); $('incomeAmt').focus();
+    }
+  }
+
   /* ---------- 弹层 ---------- */
   function openSheet(id){
     var s = $(id); var ov = $('overlay');
@@ -1626,8 +1722,185 @@
     var ov = $('overlay'); if(ov) ov.classList.remove('show');
   }
 
+  /* ---------- 每日单词 ---------- */
+  var KEY_WORDS = 'wb_words';
+  var WORD_BANK = [
+    {w:'publish',ph:'/\u02c8p\u028cb\u026bl\u026a\u0283/',pos:'v.',tag:'内容',cn:'发布、上线（视频/图文）',ex:'I hit publish, then spent ten minutes refreshing to see if anyone liked it.',exCn:'我点了发布，然后刷了十分钟看有没有人点赞。',pit:'publish 是发布内容，不是出版成书。跟老外说 I published a book，对方以为你真出书了；发条视频该说 I posted a video。'},
+    {w:'upload',ph:'/\u02cc\u028cp\u02c8lo\u028ad/',pos:'v.',tag:'内容',cn:'上传（文件/视频到平台）',ex:'Upload failed at 99%. I took it as a sign to go to bed.',exCn:'上传到 99% 失败了。我把它当成该睡觉了的信号。',pit:'upload 动词重音在后 /\u02cc\u028cp\u02c8lo\u028ad/，名词 upload /\u02c8\u028cplo\u028ad/ 重音在前。说错对方也懂，但显得不地道。'},
+    {w:'caption',ph:'/\u02c8k\u00e6p\u0283n/',pos:'n.',tag:'内容',cn:'文案/配图配视频的文字',ex:'Spent an hour on the video, two hours on the caption. The caption won.',exCn:'剪视频花了一小时，写文案花了两小时。文案赢了。',pit:'caption 不是字幕那种逐句翻译，社媒里 caption = 你发这条配的那段文字。问老外 what is the caption，等于问这配文写的啥。'},
+    {w:'hashtag',ph:'/\u02c8h\u00e6\u0283t\u00e6\u0261/',pos:'n.',tag:'内容',cn:'话题标签（井号开头）',ex:'Put a banned medical term in a hashtag once. Account got shadowbanned for a week. Good times.',exCn:'有次把一个禁用医疗词当标签发出去。账号被限流了一周。美好回忆。',pit:'hashtag 别翻译成井号，老外听不懂。说 the hashtag 就行。hashtag 是话题不是关键词，别堆一长串像刷屏广告。'},
+    {w:'follower',ph:'/\u02c8f\u0251\u02d0lo\u028ar/',pos:'n.',tag:'内容',cn:'粉丝/关注者',ex:'Got my first 100 followers. Turned out 12 were my mom\u2019s accounts.',exCn:'终于有了前 100 个粉丝。其中 12 个是我妈的小号。',pit:'follower 是关注你的人，不是物理上跟着你走的人。说 I have followers 没问题，但 my followers follow me 听起来像绕口令。'},
+    {w:'subscribe',ph:'/s\u0259b\u02c8skra\u026ab/',pos:'v.',tag:'内容',cn:'订阅/关注频道',ex:'Don\u2019t forget to subscribe, said every creator whose video you immediately closed.',exCn:'别忘了点个订阅，每一个被你立刻关掉视频的博主都这么说过。',pit:'subscribe 比 follow 更重，订阅等于持续接收更新。YouTube 用 subscribe，微博小红书用 follow。混着用对方也懂，但平台不一样。'},
+    {w:'thumbnail',ph:'/\u02c8\u03b8\u028cmne\u026al/',pos:'n.',tag:'内容',cn:'封面缩略图',ex:'Make the thumbnail first, then shoot a video that matches it. Backwards? Maybe. Works? Yes.',exCn:'先做封面，再拍一条配得上封面的视频。本末倒置？也许。有效？是的。',pit:'thumbnail 字面是拇指指甲（小图），但在视频语境里专指封面图。说 the thumbnail is ugly 等于这封面太丑了，不是嫌你指甲丑。'},
+    {w:'trending',ph:'/\u02c8trend\u026a\u014b/',pos:'adj.',tag:'内容',cn:'正在流行的/上热门的',ex:'Chased a trending topic once. By the time I posted, it was last week\u2019s news.',exCn:'有次追热点。等我发出去，热点已经变成上周的旧闻了。',pit:'trending 是当前正火，不是曾经流行过。说 this was trending 语法别扭，该说 this was popular 或 went viral。'},
+    {w:'viral',ph:'/\u02c8va\u026ar\u0259l/',pos:'adj.',tag:'内容',cn:'病毒式传播的/爆了的',ex:'My video went viral, 40 views, 38 of them me refreshing.',exCn:'我的视频爆了，40 次播放，其中 38 次是我自己刷的。',pit:'viral 本意是病毒的，但在社媒等于爆火传播。go viral 比 is viral 更常用。说 my video is viral 也行，对方会恭喜你。'},
+    {w:'draft',ph:'/dr\u00e6ft/',pos:'n.',tag:'内容',cn:'草稿/未发布的版本',ex:'I have 47 drafts. My drafts have drafts.',exCn:'我有 47 个草稿。我的草稿还有草稿。',pit:'draft 当动词是起草，名词是草稿。别跟 craft（精心制作）混，draft 是打草稿（粗），craft 是精修。'},
+    {w:'outline',ph:'/\u02c8a\u028atla\u026an/',pos:'n.',tag:'内容',cn:'大纲/框架',ex:'Wrote a perfect outline. Then filmed something completely different.',exCn:'写了个完美大纲。然后拍了完全不一样的东西。',pit:'outline 是提纲或轮廓。它是结构骨架，帮你别跑题，虽然你还是会跑。'},
+    {w:'hook',ph:'/h\u028ak/',pos:'n.',tag:'内容',cn:'开头钩子/抓人的前三秒',ex:'No hook, no views. My best hook so far: Don\u2019t do what I did.',exCn:'没钩子就没播放。我目前最好的钩子：别学我。',pit:'hook 在内容语境等于开头抓人那句话，不是鱼钩（虽然同源）。说 the video needs a stronger hook，等于这条开头得再抓人点。'},
+    {w:'edit',ph:'/\u02c8ed\u026at/',pos:'v.',tag:'内容',cn:'剪辑/编辑',ex:'Filmed 30 minutes. Edited down to 90 seconds. The 90 seconds were the boring parts.',exCn:'拍了 30 分钟。剪成 90 秒。那 90 秒是最无聊的部分。',pit:'edit 编辑文字和剪辑视频都用。但要明确说 edit a video 或 video editing，否则对方可能以为你在改文档。'},
+    {w:'script',ph:'/skr\u026apt/',pos:'n.',tag:'内容',cn:'脚本/口播稿',ex:'Wrote a script. Read it once. Threw it away. Improvised. Got more views.',exCn:'写了个脚本。读了一遍。扔了。即兴发挥。播放更高了。',pit:'script 是文字脚本。说 I am scripting 等于我在写稿，不是我在演戏。'},
+    {w:'voiceover',ph:'/\u02c8v\u0254\u026as\u02cco\u028av\u0259r/',pos:'n.',tag:'内容',cn:'旁白/后期配音',ex:'Did the voiceover in one take. Had to redo it because a cat meowed. My cat.',exCn:'旁白一遍过。结果得重录，因为有猫叫。我自己的猫。',pit:'voiceover 等于画面之外后配的声音，和 dialogue（同期对白）不同。说 I will do a voiceover 等于我来后期配段音。'},
+    {w:'engagement',ph:'/\u026an\u02c8\u0261e\u026ad\u0292m\u0259nt/',pos:'n.',tag:'内容',cn:'互动量（点赞评论转发总和）',ex:'Engagement is up, because I commented on my own video 12 times.',exCn:'互动量涨了，因为我给自己视频评论了 12 次。',pit:'engagement 在社媒等于互动量，不是订婚（虽然也是这个词）。跟同行说 engagement is low 等于互动差，跟恋人说 engagement 等于聊婚事，语境别搞错否则社死。'},
+    {w:'algorithm',ph:'/\u02c8\u00e6l\u0261\u0259r\u026a\u00f0\u0259m/',pos:'n.',tag:'内容',cn:'算法（平台推荐机制）',ex:'Blaming the algorithm is the creator\u2019s version of blaming the weather.',exCn:'怪算法，是博主的怪天气。',pit:'algorithm 重音第一音节，别读成弱起音。说 the algorithm hates me 等于算法跟我作对，其实多半是你内容不行。'},
+    {w:'batch',ph:'/b\u00e6t\u0283/',pos:'v./n.',tag:'内容',cn:'批量（一次录多条）',ex:'Batch-recorded five videos in one outfit. Nobody noticed. Or did they?',exCn:'一套衣服批量录了五条。没人发现。还是发现了？',pit:'batch 当动词是批量做。说 I batch my filming 等于我集中一次录多条。别跟 match 搞混。'},
+    {w:'consistency',ph:'/k\u0259n\u02c8s\u026ast\u0259nsi/',pos:'n.',tag:'内容',cn:'持续稳定更新',ex:'Consistency beats talent. So I am consistent. About being inconsistent.',exCn:'坚持比天赋重要。所以我很坚持，坚持不稳定地更新。',pit:'consistency 常和 persist 混，consistency 是持续稳定，persistence 是死磕不放弃。发视频要 consistency，推课要 persistence。'},
+    {w:'stream',ph:'/stri\u02d0m/',pos:'n./v.',tag:'社媒',cn:'直播/推流',ex:'Went live, forgot to unmute. Streamed silent stretching for 20 minutes. Viewers thought it was avant-garde.',exCn:'开播忘开麦。无声直播了 20 分钟。观众以为这是先锋艺术。',pit:'stream 当直播用，go live 或 start a stream。说 I am streaming 等于我在直播，不是我在划船。'},
+    {w:'audience',ph:'/\u02c8\u0254\u02d0di\u0259ns/',pos:'n.',tag:'社媒',cn:'观众/受众',ex:'My audience is mostly people who watched by accident and were too polite to leave.',exCn:'我的观众，主要是不小心点进来又太客气不好意思退出的人。',pit:'audience 重音第一音节，t 不发音。单复数同形。说 my audience 等于我的受众群体。'},
+    {w:'comment',ph:'/\u02c8k\u0251\u02d0ment/',pos:'n./v.',tag:'社媒',cn:'评论',ex:'Top comment on my last video: your cat is cute. I was not in the video.',exCn:'上一条最高赞评论：你的猫好可爱。那条视频里根本没有我。',pit:'comment 名词动词同形，重音第一音节。别读成法语腔后重音。说 leave a comment 等于留条评论。'},
+    {w:'ban',ph:'/b\u00e6n/',pos:'v./n.',tag:'社媒',cn:'封禁/禁言',ex:'Got banned for violating community guidelines. The guideline I violated was existing.',exCn:'因违反社区规范被封了。我违反的那条规范，叫活着。',pit:'ban 是封禁账号，block 是拉黑某人。ban the account、block a user。搞混了也大致能懂，但不精准。'},
+    {w:'block',ph:'/bl\u0251\u02d0k/',pos:'v.',tag:'社媒',cn:'拉黑/屏蔽',ex:'Blocked a troll. Felt powerful for about four seconds. Then remembered my views.',exCn:'拉黑了一个杠精。爽了大概四秒。然后想起了我的播放量。',pit:'block sb 等于把某人拉黑。和 ban（封号）不同，block 是你主动不看 ta，ban 是平台封 ta。'},
+    {w:'notification',ph:'/\u02ccno\u028at\u026af\u026a\u02c8ke\u026a\u0283n/',pos:'n.',tag:'社媒',cn:'通知/推送',ex:'Turned off all notifications. Now I refresh manually every 3 minutes. Progress?',exCn:'关掉了所有通知。现在我每 3 分钟手动刷一次。算进步吗？',pit:'notification 太长，口语常直接说 notif 或 ping。说 I got a notif 也行。'},
+    {w:'schedule',ph:'/\u02c8sked\u0292u\u02d0l/',pos:'n./v.',tag:'社媒',cn:'排期/安排时间',ex:'My posting schedule: Monday, Wednesday, Friday. My actual schedule: whenever I remember.',exCn:'我的发帖排期：周一三五。我的实际排期：想起来了就发。',pit:'美式读 sked-ju-l（sk 开头），英式读 shed-ju-l（sh 开头）。跟美国人说 shed-ju-l 对方愣一下，反之同理，入乡随俗。'},
+    {w:'share',ph:'/s\u0255\u025ar/',pos:'v.',tag:'社媒',cn:'分享/转发',ex:'Please share, I begged. My mom shared it. To the family group. Again.',exCn:'求转发，我喊。我妈转了。转到家族群。又来了。',pit:'share 是最泛的分享。repost 偏转发原帖，share 偏发给别人看。说 share this 等于分享一下这条。'},
+    {w:'mute',ph:'/mju\u02d0t/',pos:'v.',tag:'社媒',cn:'静音',ex:'Muted myself on live. Talked for ten minutes. Audience grew. Irony grew faster.',exCn:'直播把自己静音了。讲了十分钟。观众涨了。讽刺涨得更快。',pit:'mute 等于静音（听得见别人，别人听不见你）。deafen（电竞里）等于双方都静音。社媒直播一般用 mute。'},
+    {w:'clip',ph:'/kl\u026ap/',pos:'n.',tag:'社媒',cn:'片段/切片',ex:'Cut a 15-second clip. It got more views than the full 10-minute video. Life is fair.',exCn:'剪了个 15 秒切片。播放比完整 10 分钟那条还高。生活很公平。',pit:'clip 等于短片段，比 full video 短。说 post a clip 等于发个切片。别跟 click（点击）读音混。'},
+    {w:'invoice',ph:'/\u02c8\u026anv\u0254\u026as/',pos:'n.',tag:'经营',cn:'发票',ex:'Asked for an invoice. Got a handwritten note saying thanks for your purchase.',exCn:'要发票。收到一张手写纸条：感谢惠顾。',pit:'invoice 重音第一音节。中国语境 invoice 约等于发票（严格说 invoice 是商业发票，receipt 是收据，但口语混用）。说 I need an invoice 等于我要张发票。'},
+    {w:'revenue',ph:'/\u02c8rev\u0259nu\u02d0/',pos:'n.',tag:'经营',cn:'营业收入/流水',ex:'Revenue this month: zero. Expenses: 328. Profit: a learning experience.',exCn:'本月营收：零。支出：328。利润：一次学习经历。',pit:'revenue 是营收（还没扣成本），不是利润 profit。说 high revenue 可能其实没赚钱。别拿 revenue 当 profit 炫耀，内行一眼看穿。'},
+    {w:'expense',ph:'/ek\u02c8spens/',pos:'n.',tag:'经营',cn:'支出/费用',ex:'A ring light is a business expense. Snacks during editing are emotional support.',exCn:'环形灯算经营支出。剪辑时吃的零食算情绪支持。',pit:'expense 重音第二音节。和 expensive 同源但词性不同，expense 名词，expensive 形容词。'},
+    {w:'budget',ph:'/\u02c8b\u028cd\u0292\u026at/',pos:'n.',tag:'经营',cn:'预算',ex:'Set a budget of 3600 a month. Spent 3600 on a mic. Month: over.',exCn:'设了月预算 3600。一个麦克风花了 3600。本月：结束。',pit:'budget 重音第一音节。当动词做预算用 budget for sth。说 I did not budget for this 等于我没给这个留预算。'},
+    {w:'profit',ph:'/\u02c8pr\u0251\u02d0f\u026at/',pos:'n.',tag:'经营',cn:'利润',ex:'Revenue minus expenses equals profit. Mine equals a refund to my past self.',exCn:'营收减支出等于利润。我的等于退给过去的自己一笔钱。',pit:'profit 等于 revenue 减 expenses。零申报时 revenue 为零，profit 是负的（亏损），但个税按实际利润，亏了就不用交。别把 revenue 当 profit 报税，会多交冤枉钱。'},
+    {w:'refund',ph:'/\u02c8ri\u02d0f\u028cnd/',pos:'n.',tag:'经营',cn:'退款（名词）',ex:'Someone asked for a refund. The course was 99. They wanted emotional damages too.',exCn:'有人要退款。课是 99。他还想要精神损失费。',pit:'refund 名词重音第一，动词重音第二。说 I want a refund（名词）或 refund me（动词）。重音错了老外也懂，但地道很关键。'},
+    {w:'receipt',ph:'/r\u026a\u02c8si\u02d0t/',pos:'n.',tag:'经营',cn:'收据/小票',ex:'Kept every receipt for tax. Lost the folder. The tax office was not moved.',exCn:'每张小票都留着报税。文件夹丢了。税务局并不同情。',pit:'receipt 里 p 不发音，读成 si-t。第一次读错没人怪你，但永远读错显得不专业。'},
+    {w:'declare',ph:'/d\u026a\u02c8kler/',pos:'v.',tag:'经营',cn:'申报（税务）',ex:'Declare zero income every quarter. Feels illegal. Is 100% legal. The system is weird.',exCn:'每季度申报零收入。感觉像违法。其实 100% 合法。这系统有点怪。',pit:'declare 重音第二音节。declare tax 等于申报税务。和 announce 不同，declare 更正式更官方。'},
+    {w:'license',ph:'/\u02c8la\u026asns/',pos:'n.',tag:'经营',cn:'执照/许可证',ex:'My license says education consulting. I teach people how to stand up slowly. Close enough.',exCn:'我执照上写着教育咨询。我教人怎么慢慢站起来。挺接近的。',pit:'美式 license 名词动词同拼，英式 licence 名词、license 动词。个体户营业执照叫 business license。'},
+    {w:'register',ph:'/\u02c8red\u0292\u026ast\u0259r/',pos:'v.',tag:'经营',cn:'注册/登记',ex:'Registered my business in March. The tax office sent a welcome letter. It felt like a threat.',exCn:'三月注册了执照。税务局发了封欢迎信。感觉像威胁。',pit:'register 重音第一音节。注册公司 register a business。和登录 log in 不同。'},
+    {w:'deduct',ph:'/d\u026a\u02c8d\u028ckt/',pos:'v.',tag:'经营',cn:'税前扣除/抵扣',ex:'Tried to deduct snacks as creative fuel. Tax office: no.',exCn:'想拿零食抵税，理由创作燃料。税务局：不行。',pit:'deduct 等于税前扣除，deductible 等于可抵扣的。和 discount（打折）不同，discount 是少付钱，deduct 是算进成本少交税。'},
+    {w:'audit',ph:'/\u02c8\u0254\u02d0d\u026at/',pos:'n./v.',tag:'经营',cn:'审计/查账',ex:'Audit? My books are so simple the auditor would fall asleep before finding anything.',exCn:'查账？我的账简单到审计员还没查出啥就先睡着了。',pit:'audit 重音第一音节。查账征收叫 audit-based collection。和 audience（观众）无关，别读混。'},
+    {w:'stretch',ph:'/stret\u0283/',pos:'v./n.',tag:'身体',cn:'拉伸/伸展',ex:'Stretched for five minutes. Felt like a new person. Then sat down. Old person back.',exCn:'拉伸了五分钟。感觉像换了个人。然后坐下。旧人又回来了。',pit:'stretch 是拉伸。和 strengthen（强化）反义但同源。说 stretch it out 等于拉伸一下。'},
+    {w:'balance',ph:'/\u02c8b\u00e6l\u0259ns/',pos:'n.',tag:'身体',cn:'平衡',ex:'My balance improved. I can now stand on one foot for 3 seconds. Previously: 2.',exCn:'我的平衡进步了。现在能单脚站 3 秒。之前：2 秒。',pit:'balance 重音第一音节。balance 既是身体平衡，也是生活平衡（work-life balance），一个词两用。'},
+    {w:'posture',ph:'/\u02c8p\u0251\u02d0st\u0283\u0259r/',pos:'n.',tag:'身体',cn:'姿势/体态',ex:'Good posture for the camera. Bad posture the other 23 hours. The camera wins.',exCn:'为了镜头姿势端正。其余 23 小时东倒西歪。镜头赢了。',pit:'posture 重音第一音节。和 position（位置）不同，posture 是身体的姿态。'},
+    {w:'breath',ph:'/bre\u03b8/',pos:'n.',tag:'身体',cn:'呼吸（名词）',ex:'Take a deep breath, they said. I did. Then held the pose too long. Breath: gone.',exCn:'深呼吸，他们说。我深了。然后姿势保持太久。呼吸：没了。',pit:'breath 名词结尾清音 th，breathe 动词结尾浊音 th 加长元音。读错老外听着别扭。'},
+    {w:'routine',ph:'/ru\u02d0\u02c8ti\u02d0n/',pos:'n.',tag:'身体',cn:'常规/每日练习流程',ex:'My morning routine: stretch, breathe, check phone, forget the routine.',exCn:'我的晨间流程：拉伸、呼吸、看手机、忘掉流程。',pit:'routine 重音第二音节，美式。和 route（路线）不同。daily routine 等于每日例行。'},
+    {w:'pace',ph:'/pe\u026as/',pos:'n.',tag:'身体',cn:'节奏/配速',ex:'Slow pace, they said. I went so slow I forgot where I was going.',exCn:'慢慢来，他们说。我慢到忘了要去哪。',pit:'pace 是节奏或速度。和 piece（块）读音相近但意思完全不同。说 find your pace 等于找到自己的节奏。'},
+    {w:'gentle',ph:'/\u02c8d\u0292entl/',pos:'adj.',tag:'身体',cn:'轻柔的/温和的',ex:'Gentle movement, they said. My version of gentle is everyone else barely moving.',exCn:'动作要轻柔，他们说。我的轻柔是别人眼里的几乎不动。',pit:'gentle 重音第一音节，g 读软音不是硬音。gentle 不等于 general，别混。'},
+    {w:'progress',ph:'/\u02c8pr\u0251\u02d0\u0261res/',pos:'n.',tag:'身体',cn:'进步/进展（名词）',ex:'Progress is slow. But last week I could not, this week I can, a little. That counts.',exCn:'进步很慢。但上周做不到的，这周能了，一点点。算数。',pit:'progress 名词重音第一，动词重音第二。说 I am making progress（名词）或 I am progressing（动词）。重音错也懂，但地道很关键。'},
+    {w:'wobble',ph:'/\u02c8w\u0251\u02d0bl/',pos:'v./n.',tag:'身体',cn:'摇晃/晃悠',ex:'I wobble when I stand. Viewers think it is a balance drill. I am just trying not to fall.',exCn:'我站着会晃。观众以为是平衡训练。我只是在努力不摔倒。',pit:'wobble 是轻微摇晃不稳。和 wade（涉水）无关。说 my legs wobble 等于我腿在晃。'},
+    {w:'strength',ph:'/stre\u014b\u03b8/',pos:'n.',tag:'身体',cn:'力量',ex:'Gained strength. Can now carry groceries AND my ego home in one trip.',exCn:'长了点力气。现在能一趟把菜和我的自尊一起拎回家。',pit:'strength 末尾是清音 th，g 不发音。别读成硬 g 加 th。strengthen 动词。'},
+    {w:'deadline',ph:'/\u02c8dedla\u026an/',pos:'n.',tag:'日常',cn:'截止日期',ex:'Deadline today. Started at 9pm. Finished at 9:02pm. Quality: questionable.',exCn:'今天截止。晚上 9 点开工。9:02 完成。质量：存疑。',pit:'deadline 字面死亡线，实际等于截止时间。说 the deadline is tight 等于时间很紧。'},
+    {w:'reminder',ph:'/r\u026a\u02c8ma\u026and\u0259r/',pos:'n.',tag:'日常',cn:'提醒',ex:'Set a reminder. Ignored it. Set another. Ignored it too. Phone gave up.',exCn:'设了个提醒。忽略了。又设一个。又忽略了。手机放弃了。',pit:'reminder 是提醒（名词），动词是 remind。说 set a reminder 等于设个提醒，不是设个记住。'},
+    {w:'checklist',ph:'/\u02c8t\u0283ekl\u026ast/',pos:'n.',tag:'日常',cn:'清单/核对表',ex:'My checklist has one item: survive today. I keep checking it. Feels productive.',exCn:'我的清单只有一项：今天先活下去。我反复打勾。感觉很高效。',pit:'checklist 等于一项项打勾的清单。和 to-do list 接近，但 checklist 更强调逐项核对。'},
+    {w:'prioritize',ph:'/pra\u026a\u02c8\u0254\u02d0r\u0259ta\u026az/',pos:'v.',tag:'日常',cn:'排优先级/分主次',ex:'Prioritize, they said. Everything is priority one. Nothing gets done.',exCn:'排优先级，他们说。每件事都是第一优先。结果啥也没做。',pit:'prioritize 重音第二音节。和 priority 同源。说 I prioritize X over Y 等于我把 X 排在 Y 前面。'},
+    {w:'procrastinate',ph:'/pro\u028a\u02c8kr\u00e6st\u026ane\u026at/',pos:'v.',tag:'日常',cn:'拖延',ex:'I am not procrastinating. I am giving my ideas time to marinate.',exCn:'我没有拖延。我在给创意腌制入味的时间。',pit:'procrastinate 重音第二音节。说 I procrastinate 等于我拖延，比 I delay 更精准地指明明该做却拖着不做。'},
+    {w:'habit',ph:'/\u02c8h\u00e6b\u026at/',pos:'n.',tag:'日常',cn:'习惯',ex:'Tried to build a habit. Built a habit of trying to build habits.',exCn:'想养成个习惯。结果养成了反复尝试养成习惯的习惯。',pit:'habit 重音第一音节。build a habit 养成，break a habit 戒掉。和 rabbit（兔子）读音结构像，别混。'},
+    {w:'negotiate',ph:'/n\u026a\u02c8\u0261o\u028a\u0283ie\u026at/',pos:'v.',tag:'日常',cn:'谈判/协商',ex:'Negotiated a brand deal. They offered exposure. I wanted money. We compromised on less money.',exCn:'跟品牌谈合作。对方给曝光。我要钱。最后折中：更少的钱。',pit:'negotiate 重音第二音节，ci 读 sh 音。说 negotiate with sb 等于跟某人谈。'},
+    {w:'pitch',ph:'/p\u026at\u0283/',pos:'v./n.',tag:'日常',cn:'推销/路演（想法或产品）',ex:'Pitched my course. They asked what is the ROI. I said peace of mind. Deal: off.',exCn:'推销我的课。对方问回报率多少。我说内心的平静。合作：黄了。',pit:'pitch 当动词是推销。pitch a product、pitch an idea。和 beach（沙滩）押韵，但意思风马牛不相及。'}
+  ];
+
+  function pad2(n){ return n < 10 ? '0' + n : '' + n; }
+  function todayStr(){ return y + '-' + pad2(m) + '-' + pad2(d); }
+  function isoWeek(dateStr){
+    var dt = new Date(dateStr + 'T00:00:00');
+    dt.setDate(dt.getDate() + 4 - (dt.getDay() || 7));
+    var yearStart = new Date(dt.getFullYear(), 0, 1);
+    var week = Math.ceil((((dt - yearStart) / 86400000) + 1) / 7);
+    return dt.getFullYear() + '-W' + pad2(week);
+  }
+  function getWordData(){ return storeGet(KEY_WORDS, { offset: 0, lastDate: '', learned: [], reviewDone: [] }); }
+  function saveWordData(wd){ storeSet(KEY_WORDS, wd); }
+  function findWord(w){ for(var i = 0; i < WORD_BANK.length; i++){ if(WORD_BANK[i].w === w) return WORD_BANK[i]; } return null; }
+
+  function ensureTodayWords(){
+    var wd = getWordData();
+    var td = todayStr();
+    if(wd.lastDate !== td){
+      var start = wd.offset % WORD_BANK.length;
+      for(var i = 0; i < 3; i++){
+        var item = WORD_BANK[(start + i) % WORD_BANK.length];
+        wd.learned.push({ w: item.w, date: td, week: isoWeek(td) });
+      }
+      wd.offset = (start + 3) % WORD_BANK.length;
+      wd.lastDate = td;
+      saveWordData(wd);
+    }
+    return wd;
+  }
+
+  function renderWordToday(){
+    var wd = ensureTodayWords();
+    var td = todayStr();
+    var list = wd.learned.filter(function(x){ return x.date === td; });
+    var box = $('wordToday');
+    if(!box) return;
+    if(!list.length){ box.innerHTML = '<div class="word-done-tap">今天的词还没生成，刷新试试</div>'; return; }
+    var html = '';
+    list.forEach(function(it){
+      var item = findWord(it.w);
+      if(!item) return;
+      html += '<div class="word-card"><div class="word-head"><span class="word-w">' + item.w + '</span><span class="word-ph">' + item.ph + '</span><span class="word-pos">' + item.pos + '</span><span class="word-tag">' + item.tag + '</span></div><div class="word-cn">' + item.cn + '</div><div class="word-ex">' + item.ex + '</div><div class="word-ex-cn">' + item.exCn + '</div><div class="word-pitfall">' + item.pit + '</div></div>';
+    });
+    box.innerHTML = html;
+  }
+
+  function renderWordReview(){
+    var wd = getWordData();
+    var thisWeek = isoWeek(todayStr());
+    var need = [];
+    var seen = {};
+    for(var i = wd.learned.length - 1; i >= 0; i--){
+      var it = wd.learned[i];
+      if(it.week === thisWeek) continue;
+      var key = it.week + '|' + it.w;
+      if(wd.reviewDone.indexOf(key) >= 0) continue;
+      if(seen[it.w]) continue;
+      seen[it.w] = true;
+      need.push(it);
+      if(need.length >= 5) break;
+    }
+    var box = $('wordReview');
+    if(!box) return;
+    if(!need.length){ box.innerHTML = ''; return; }
+    var html = '<div class="card card-tight" style="margin-top:6px;"><div class="card-title">复习提问</div><div class="card-sub">以前学过的词，考考你还记得吗</div></div>';
+    need.forEach(function(it, idx){
+      var item = findWord(it.w);
+      if(!item) return;
+      html += '<div class="review-card" data-rw="' + it.w + '"><span class="review-badge">复习 #' + (idx + 1) + '</span><div class="review-q">这个词是什么？（看释义想单词）</div><div class="review-hint">' + item.cn + '</div><div class="review-ex">' + item.ex + '</div><button class="btn btn-teal btn-block" data-on="revealWord" data-w="' + it.w + '" style="min-height:44px;">显示答案</button><div class="review-ans" data-ans="' + it.w + '" style="display:none;margin-bottom:4px;">' + item.w + ' <span class="ph">' + item.ph + '</span></div><div class="review-act" data-act="' + it.w + '" style="display:none;"><button class="btn btn-teal" data-on="reviewOK" data-w="' + it.w + '" data-week="' + it.week + '">记住了</button><button class="btn btn-ghost" data-on="reviewAgain" data-w="' + it.w + '">再学一次</button></div></div>';
+    });
+    box.innerHTML = html;
+  }
+
+  function renderWordStats(){
+    var wd = getWordData();
+    var seen = {};
+    var total = 0;
+    wd.learned.forEach(function(x){ if(!seen[x.w]){ seen[x.w] = true; total++; } });
+    var thisWeek = isoWeek(todayStr());
+    var weekCount = wd.learned.filter(function(x){ return x.week === thisWeek; }).length;
+    var box = $('wordStats');
+    if(!box) return;
+    box.innerHTML = '<div class="si"><div class="n">' + total + '</div><div class="l">累计学词</div></div><div class="si"><div class="n">' + weekCount + '</div><div class="l">本周新学</div></div><div class="si"><div class="n">' + wd.reviewDone.length + '</div><div class="l">已复习</div></div>';
+  }
+
+  function revealWord(w){
+    var card = document.querySelector('.review-card[data-rw="' + w + '"]');
+    if(!card) return;
+    var ans = card.querySelector('[data-ans="' + w + '"]');
+    var act = card.querySelector('[data-act="' + w + '"]');
+    var btn = card.querySelector('[data-on="revealWord"]');
+    if(ans) ans.style.display = 'block';
+    if(act) act.style.display = 'flex';
+    if(btn) btn.style.display = 'none';
+  }
+  function reviewOK(w, week){
+    var wd = getWordData();
+    var key = week + '|' + w;
+    if(wd.reviewDone.indexOf(key) < 0) wd.reviewDone.push(key);
+    saveWordData(wd);
+    renderWordReview();
+    renderWordStats();
+  }
+  function reviewAgain(){ renderWordReview(); }
+  function initWords(){
+    ensureTodayWords();
+    renderWordToday();
+    renderWordReview();
+    renderWordStats();
+  }
+
   /* ---------- 事件委托 ---------- */
   function handleOn(on, t, e){
+    if(on === 'revealWord'){ revealWord(t.getAttribute('data-w')); return; }
+    if(on === 'reviewOK'){ reviewOK(t.getAttribute('data-w'), t.getAttribute('data-week')); return; }
+    if(on === 'reviewAgain'){ reviewAgain(t.getAttribute('data-w')); return; }
     if(on === 'settab'){
       e.preventDefault();
       setTab(t.getAttribute('data-page'), t.getAttribute('data-tab'));
@@ -1653,22 +1926,40 @@
       return;
     }
     if(on === 'openEntry'){
+      editingId = null;
+      $('sheetOutTitle').textContent = '记一笔支出';
       $('entryAmt').value = ''; $('entryNote').value = '';
       openSheet('entrySheet'); $('entryAmt').focus();
       return;
     }
     if(on === 'saveEntry'){
-      addEntry('out', $('entryAmt').value, $('entryCat').value, $('entryNote').value);
+      if(editingId){
+        updateEntry(editingId, $('entryAmt').value, $('entryCat').value, $('entryNote').value);
+        editingId = null;
+      }else{
+        addEntry('out', $('entryAmt').value, $('entryCat').value, $('entryNote').value);
+      }
       closeSheets();
       return;
     }
+    if(on === 'editEntry'){
+      startEditEntry(t.getAttribute('data-id'));
+      return;
+    }
     if(on === 'openIncome'){
+      editingId = null;
+      $('sheetInTitle').textContent = '记一笔收入';
       $('incomeAmt').value = ''; $('incomeNote').value = '';
       openSheet('incomeSheet'); $('incomeAmt').focus();
       return;
     }
     if(on === 'saveIncome'){
-      addEntry('income', $('incomeAmt').value, null, $('incomeNote').value, $('incomeSrc').value);
+      if(editingId){
+        updateEntry(editingId, $('incomeAmt').value, null, $('incomeNote').value, $('incomeSrc').value);
+        editingId = null;
+      }else{
+        addEntry('income', $('incomeAmt').value, null, $('incomeNote').value, $('incomeSrc').value);
+      }
       closeSheets();
       return;
     }
@@ -1788,7 +2079,7 @@
 
   /* ---------- 备份 ---------- */
   function doBackup(){
-    var data = { budget: storeGet(KEY_BUDGET, 3600), entries: getEntries(), tasks: tasks, exportedAt: new Date().toISOString() };
+    var data = { budget: storeGet(KEY_BUDGET, 3600), entries: getEntries(), tasks: tasks, words: getWordData(), exportedAt: new Date().toISOString() };
     var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
@@ -1805,6 +2096,7 @@
       if(data.entries) saveEntries(data.entries);
       if(typeof data.budget === 'number') storeSet(KEY_BUDGET, data.budget);
       if(data.tasks){ tasks = data.tasks; storeSet(taskKey, tasks); initTasks(); }
+      if(data.words){ saveWordData(data.words); initWords(); }
       updateStats();
       closeSheets();
       alert('导入成功');
@@ -1898,6 +2190,7 @@
   initBanner();
   renderEntries();
   updateStats();
+  initWords();
 
   if('serviceWorker' in navigator){
     navigator.serviceWorker.register('sw.js').catch(function(){});
