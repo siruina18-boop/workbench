@@ -1,5 +1,5 @@
-/* 瑞娜工作台 Service Worker - 离线缓存 */
-const CACHE_NAME = 'ruina-workbench-v1';
+/* 瑞娜工作台 Service Worker - v3：网络优先，缓存兜底 */
+const CACHE_NAME = 'ruina-workbench-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -33,12 +33,17 @@ self.addEventListener('activate', function(e){
 });
 
 self.addEventListener('fetch', function(e){
+  if(e.request.method !== 'GET') return;
   e.respondWith(
-    caches.match(e.request).then(function(cached){
-      return cached || fetch(e.request).then(function(response){
-        return response;
-      }).catch(function(){
-        return new Response('离线中，请联网后刷新', { headers: {'Content-Type':'text/plain'} });
+    fetch(e.request).then(function(response){
+      if(response && response.status === 200 && e.request.url.indexOf(location.origin) === 0){
+        var clone = response.clone();
+        caches.open(CACHE_NAME).then(function(cache){ cache.put(e.request, clone); });
+      }
+      return response;
+    }).catch(function(){
+      return caches.match(e.request).then(function(cached){
+        return cached || new Response('离线中，请联网后刷新', { headers: {'Content-Type':'text/plain'} });
       });
     })
   );
