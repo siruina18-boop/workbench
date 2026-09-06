@@ -367,6 +367,17 @@
     .review-ans{display:flex;align-items:baseline;flex-wrap:wrap;gap:8px;font-size:22px;font-weight:800;color:var(--coral);margin-bottom:4px;}
     .review-ans .ph{font-size:14px;color:var(--teal-dk);font-style:italic;font-weight:400;}
     .review-act{display:flex;gap:8px;margin-top:10px;}
+    .word-acts{display:flex;gap:8px;margin-top:10px;}
+    .word-acts .wact{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;border-radius:12px;border:none;font-size:13.5px;font-weight:700;cursor:pointer;background:#EAF3F1;color:var(--teal-dk);font-family:inherit;}
+    .word-acts .wact:active{background:#D8E9E6;}
+    .word-acts .wact.wdict{background:#F7F0E2;color:#8A5A18;}
+    .word-acts .wact.wdict:active{background:#EFE5CF;}
+    .review-card.bm{border-color:#8B7BB5;}
+    .review-badge.bm{background:#8B7BB5;}
+    .wd-sub.subm{color:#6B5B93;}
+    .wd-sub.subm .cnt{background:#8B7BB5;}
+    .ans-say{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;border:none;background:#EAF3F1;color:var(--teal-dk);cursor:pointer;flex:none;}
+    .ans-say:active{background:#D8E9E6;}
     .review-act .btn{flex:1;min-height:44px;font-size:14px;}
     .word-stat{display:flex;gap:8px;margin-top:12px;}
     .word-stat .m{flex:1;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:12px;padding:7px 6px;text-align:center;color:#fff;}
@@ -1354,11 +1365,12 @@
                 <span class="wd-hero-title">每日 3 词</span>
                 <span class="wd-chip" id="wordStreak">打卡中</span>
               </div>
-              <div class="wd-hero-sub">贴合你的内容创作 / 经营 / 身体练习场景 · 下周自动复习</div>
+              <div class="wd-hero-sub">贴合你的内容创作 / 经营 / 身体练习场景 · 下周周复习 · 满月月回顾</div>
               <div class="word-stat" id="wordStats"></div>
             </div>
             <div id="wordToday"></div>
             <div id="wordReview"></div>
+            <div id="wordMonthReview"></div>
           </div>
         </section>
       </main>
@@ -1874,6 +1886,32 @@
     return '';
   }
 
+  var SVG_SAY = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+  var SVG_BOOK = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>';
+
+  function sayWord(w){
+    if(!w) return;
+    if(!('speechSynthesis' in window)){
+      window.open('https://www.youdao.com/result?word=' + encodeURIComponent(w) + '&lang=en', '_blank');
+      return;
+    }
+    try{
+      speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(w);
+      u.lang = 'en-US';
+      u.rate = 0.82;
+      var vs = speechSynthesis.getVoices();
+      for(var i = 0; i < vs.length; i++){
+        if(vs[i].lang && vs[i].lang.indexOf('en') === 0){ u.voice = vs[i]; break; }
+      }
+      speechSynthesis.speak(u);
+    }catch(e){}
+  }
+  function lookupWord(w){
+    if(!w) return;
+    window.open('https://www.youdao.com/result?word=' + encodeURIComponent(w) + '&lang=en', '_blank');
+  }
+
   function renderWordToday(){
     var wd = ensureTodayWords();
     var td = todayStr();
@@ -1885,14 +1923,12 @@
     list.forEach(function(it, idx){
       var item = findWord(it.w);
       if(!item) return;
-      html += '<div class="word-card' + catCls(item.tag) + '"><div class="word-num">' + (idx + 1) + '</div><div class="word-head"><span class="word-w">' + item.w + '</span><span class="word-ph">' + item.ph + '</span><span class="word-pos">' + item.pos + '</span><span class="word-tag">' + item.tag + '</span></div><div class="word-cn">' + item.cn + '</div><div class="word-exbox"><div class="word-ex">' + SVG_QUOTE + '<span>' + item.ex + '</span></div><div class="word-ex-cn">' + item.exCn + '</div></div><div class="word-pitfall">' + SVG_WARN + '<span>' + item.pit + '</span></div></div>';
+      html += '<div class="word-card' + catCls(item.tag) + '"><div class="word-num">' + (idx + 1) + '</div><div class="word-head"><span class="word-w">' + item.w + '</span><span class="word-ph">' + item.ph + '</span><span class="word-pos">' + item.pos + '</span><span class="word-tag">' + item.tag + '</span></div><div class="word-cn">' + item.cn + '</div><div class="word-exbox"><div class="word-ex">' + SVG_QUOTE + '<span>' + item.ex + '</span></div><div class="word-ex-cn">' + item.exCn + '</div></div><div class="word-pitfall">' + SVG_WARN + '<span>' + item.pit + '</span></div><div class="word-acts"><button class="wact" data-on="sayWord" data-w="' + item.w + '">' + SVG_SAY + '听读音</button><button class="wact wdict" data-on="lookupWord" data-w="' + item.w + '">' + SVG_BOOK + '查读音和解释</button></div></div>';
     });
     box.innerHTML = html;
   }
 
-  function renderWordReview(){
-    var wd = getWordData();
-    var thisWeek = isoWeek(todayStr());
+  function collectWeekReview(wd, thisWeek){
     var need = [];
     var seen = {};
     for(var i = wd.learned.length - 1; i >= 0; i--){
@@ -1905,15 +1941,59 @@
       need.push(it);
       if(need.length >= 5) break;
     }
-    var box = $('wordReview');
-    if(!box) return;
-    if(!need.length){ box.innerHTML = ''; return; }
-    var html = '<div class="wd-sub"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6"/><path d="M2.5 22v-6h6"/><path d="M21.5 8a10 10 0 0 0-19 4"/><path d="M2.5 14a10 10 0 0 0 19-4"/></svg>复习提问<span class="cnt">' + need.length + ' 个</span><span class="line"></span></div>';
+    return need;
+  }
+  function collectMonthReview(wd, skipWords){
+    var today = new Date(todayStr() + 'T00:00:00');
+    var need = [];
+    var seen = {};
+    for(var i = wd.learned.length - 1; i >= 0; i--){
+      var it = wd.learned[i];
+      if(!it.date) continue;
+      var days = Math.floor((today - new Date(it.date + 'T00:00:00')) / 86400000);
+      if(days < 28) continue;
+      if(wd.reviewDone.indexOf('M|' + it.w) >= 0) continue;
+      if(seen[it.w] || skipWords[it.w]) continue;
+      seen[it.w] = true;
+      need.push(it);
+      if(need.length >= 3) break;
+    }
+    return need;
+  }
+  function buildReviewCards(need, kind){
+    var html = '';
     need.forEach(function(it, idx){
       var item = findWord(it.w);
       if(!item) return;
-      html += '<div class="review-card" data-rw="' + it.w + '"><span class="review-badge">Q' + (idx + 1) + ' · ' + item.tag + '</span><div class="review-q">这个词是什么？（看释义想单词）</div><div class="review-hint">' + item.cn + '</div><div class="review-ex">' + item.ex + '</div><button class="btn btn-teal btn-block" data-on="revealWord" data-w="' + it.w + '" style="min-height:44px;">显示答案</button><div class="review-ans" data-ans="' + it.w + '" style="display:none;margin-bottom:4px;">' + item.w + ' <span class="ph">' + item.ph + '</span></div><div class="review-act" data-act="' + it.w + '" style="display:none;"><button class="btn btn-teal" data-on="reviewOK" data-w="' + it.w + '" data-week="' + it.week + '">记住了</button><button class="btn btn-ghost" data-on="reviewAgain" data-w="' + it.w + '">再学一次</button></div></div>';
+      var key = kind === 'month' ? ('M|' + it.w) : (it.week + '|' + it.w);
+      var cls = kind === 'month' ? ' bm' : '';
+      var label = kind === 'month' ? '月复习' : '周复习';
+      html += '<div class="review-card' + cls + '" data-rw="' + it.w + '"><span class="review-badge' + cls + '">' + label + ' Q' + (idx + 1) + ' · ' + item.tag + '</span><div class="review-q">这个词是什么？（看释义想单词）</div><div class="review-hint">' + item.cn + '</div><div class="review-ex">' + item.ex + '</div><button class="btn btn-teal btn-block" data-on="revealWord" data-w="' + it.w + '" style="min-height:44px;">显示答案</button><div class="review-ans" style="display:none;margin-bottom:4px;">' + it.w + ' <span class="ph">' + item.ph + '</span><button class="ans-say" data-on="sayWord" data-w="' + it.w + '" aria-label="读一遍">' + SVG_SAY + '</button></div><div class="review-act" style="display:none;"><button class="btn btn-teal" data-on="reviewOK" data-w="' + it.w + '" data-key="' + key + '">记住了</button><button class="btn btn-ghost" data-on="reviewAgain" data-w="' + it.w + '">再学一次</button></div></div>';
     });
+    return html;
+  }
+  var SVG_REPLAY = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6"/><path d="M2.5 22v-6h6"/><path d="M21.5 8a10 10 0 0 0-19 4"/><path d="M2.5 14a10 10 0 0 0 19-4"/></svg>';
+  function renderWordReview(){
+    var wd = getWordData();
+    var need = collectWeekReview(wd, isoWeek(todayStr()));
+    var box = $('wordReview');
+    if(!box) return;
+    if(!need.length){ box.innerHTML = ''; return; }
+    var html = '<div class="wd-sub">' + SVG_REPLAY + '周复习提问<span class="cnt">' + need.length + ' 个</span><span class="line"></span></div>';
+    html += buildReviewCards(need, 'week');
+    box.innerHTML = html;
+  }
+  function renderWordMonthReview(){
+    var wd = getWordData();
+    var box = $('wordMonthReview');
+    if(!box) return;
+    var weekly = collectWeekReview(wd, isoWeek(todayStr()));
+    var skipWords = {};
+    weekly.forEach(function(x){ skipWords[x.w] = true; });
+    var need = collectMonthReview(wd, skipWords);
+    if(!need.length){ box.innerHTML = ''; return; }
+    var html = '<div class="wd-sub subm">' + SVG_REPLAY + '月复习回顾<span class="cnt">' + need.length + ' 个</span><span class="line"></span></div>';
+    html += buildReviewCards(need, 'month');
     box.innerHTML = html;
   }
 
@@ -1939,25 +2019,29 @@
     }
   }
 
-  function revealWord(w){
-    var card = document.querySelector('.review-card[data-rw="' + w + '"]');
+  function revealWord(btn){
+    var card = btn.closest ? btn.closest('.review-card') : document.querySelector('.review-card[data-rw="' + (btn.getAttribute ? btn.getAttribute('data-w') : '') + '"]');
     if(!card) return;
-    var ans = card.querySelector('[data-ans="' + w + '"]');
-    var act = card.querySelector('[data-act="' + w + '"]');
-    var btn = card.querySelector('[data-on="revealWord"]');
-    if(ans) ans.style.display = 'block';
+    var ans = card.querySelector('.review-ans');
+    var act = card.querySelector('.review-act');
+    if(ans) ans.style.display = 'flex';
     if(act) act.style.display = 'flex';
-    if(btn) btn.style.display = 'none';
+    btn.style.display = 'none';
+    var w = card.getAttribute('data-rw');
+    if(w) sayWord(w);
   }
-  function reviewOK(w, week){
+  function reviewOK(w, key){
     var wd = getWordData();
-    var key = week + '|' + w;
-    if(wd.reviewDone.indexOf(key) < 0) wd.reviewDone.push(key);
+    if(key && wd.reviewDone.indexOf(key) < 0) wd.reviewDone.push(key);
     saveWordData(wd);
     renderWordReview();
+    renderWordMonthReview();
     renderWordStats();
   }
-  function reviewAgain(){ renderWordReview(); }
+  function reviewAgain(){
+    renderWordReview();
+    renderWordMonthReview();
+  }
   function renderWordEntry(){
     var wd = getWordData();
     var td = todayStr();
@@ -1971,15 +2055,18 @@
     ensureTodayWords();
     renderWordToday();
     renderWordReview();
+    renderWordMonthReview();
     renderWordStats();
     renderWordEntry();
   }
 
   /* ---------- 事件委托 ---------- */
   function handleOn(on, t, e){
-    if(on === 'revealWord'){ revealWord(t.getAttribute('data-w')); return; }
-    if(on === 'reviewOK'){ reviewOK(t.getAttribute('data-w'), t.getAttribute('data-week')); return; }
-    if(on === 'reviewAgain'){ reviewAgain(t.getAttribute('data-w')); return; }
+    if(on === 'sayWord'){ sayWord(t.getAttribute('data-w')); return; }
+    if(on === 'lookupWord'){ lookupWord(t.getAttribute('data-w')); return; }
+    if(on === 'revealWord'){ revealWord(t); return; }
+    if(on === 'reviewOK'){ reviewOK(t.getAttribute('data-w'), t.getAttribute('data-key')); return; }
+    if(on === 'reviewAgain'){ reviewAgain(); return; }
     if(on === 'settab'){
       e.preventDefault();
       setTab(t.getAttribute('data-page'), t.getAttribute('data-tab'));
